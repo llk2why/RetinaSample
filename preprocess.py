@@ -2,6 +2,8 @@ import os
 import cv2
 import yaml
 import numpy as np
+import matplotlib.pyplot as plt
+
 from config import *
 from PIL import Image
 from collections import Counter
@@ -60,14 +62,23 @@ def crop_imgs():
     with open(YAML.CHOP_PATCH, 'w') as f:
         yaml.dump(chop_info, f)
 
-def generate_sample_matrix(shape):
-
+def sample_imgs():
+    if not os.path.exists(Dataset.MOSAIC_DIR):
+        os.makedirs(Dataset.MOSAIC_DIR)
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'jpg' in x]
+    for pic in pics:
+        fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
+        img = cv2.imread(fpath)
+        
+        im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
+        fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR,pic)
+        cv2.imwrite(fpath_mosaic,im)
 
 
 def start():
-    gather_info()
-    crop_imgs()
-
+    # gather_info()
+    # crop_imgs()
+    sample_imgs()
 
 if __name__ == '__main__':
     start()
