@@ -1,8 +1,11 @@
+PATCH_SIZE = 256
+PATCH_STRIDE = 128
+
 class Dataset:
-    RAW_DIR = r'.\data\Sandwich 0612'
-    CHOPPED_DIR = r'.\data\Sandwich 0612'
-    MOSAIC_DIR = r'.\data\Sandwich 0612'
+    RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
+    CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'
+    MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
 
 class YAML:
-    CHOP_POINT = r'.\yamls\chop.yaml'
+    CHOP_PATCH = r'.\yamls\chop.yaml'
     
