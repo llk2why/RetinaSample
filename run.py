@@ -71,7 +71,8 @@ def train(epoch, model, train_loader, optimizer, criterion):
         loss_list.append(loss.item())
 
         mse = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
-        psnr = 20*torch.log10(torch.tensor(255).to(device))-10*torch.log10(mse)
+        tensor = torch.tensor(255).float().to(device)
+        psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
         train_loss.extend(loss_list)
 
         if i % args.display_freq == 0:
@@ -100,7 +101,8 @@ def evaluate(model, criterion,loader):
             loss_list.append(loss.item())
 
             mse = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
-            psnr = 20*torch.log10(torch.tensor(255).to(device))-10*torch.log10(mse)
+            tensor = torch.tensor(255).float().to(device)
+            psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
             train_loss.extend(loss_list)
 
             if i % args.display_freq == 0:
