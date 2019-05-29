@@ -6,23 +6,26 @@ def LOG_INFO(msg):
     display_now = str(now).split(' ')[1][:-3]
     print(display_now + ' ' + msg)
 
-def loadtrain1():
-    train_x = np.load('train_x1.npy')
-    train_y = np.load('train_y1.npy')
-    with open('train_name1.yaml','r') as f:
-        train_name = yaml.load(f)
-    return train_x,train_y,train_name
+def load_train_data(index):
+    fx = 'data/train_x{}.npy'.format(index)
+    fy = 'data/train_y{}.npy'.format(index)
+    train_x = np.load(fx)
+    train_y = np.load(fy)
+    return train_x,train_y
 
-def loadtrain2():
-    train_x = np.load('train_x2.npy')
-    train_y = np.load('train_y2.npy')
-    with open('train_name2.yaml','r') as f:
-        train_name = yaml.load(f)
-    return train_x,train_y,train_name
+def load_test_data():
+    test_x = np.load('data/test_x2.npy')
+    test_y = np.load('data/test_y2.npy')
+    test_x = np.load(fx)
+    test_y = np.load(fy)
+    return test_x,test_y
 
-def loadtest():
-    test_x = np.load('test_x2.npy')
-    test_y = np.load('test_y2.npy')
-    with open('test_name.yaml','r') as f:
+def read_train_name(index):
+    with open('data/train_name{}.yaml'.format(index),'r') as f:
+        train_name = yaml.load(f)
+    return train_name
+
+def read_test_name():
+    with open('data/test_name.yaml','r') as f:
         test_name = yaml.load(f)
-    return test_x,test_y,test_name
+    return test_name

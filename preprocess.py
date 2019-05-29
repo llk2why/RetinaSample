@@ -128,6 +128,7 @@ def npz2img():
     train_x1 = np.load('./data/train_x1.npy')
     train_y1 = np.load('./data/train_y1.npy')
     print(train_x1[0].shape)
+    print(train_x1.dtype)
     cv2.imshow('t',train_x1[0].transpose(1,2,0))
     cv2.waitKey(0) 
     cv2.imshow('t',train_y1[0].transpose(1,2,0))
@@ -135,11 +136,11 @@ def npz2img():
 
 
 def start():
-    gather_info()
+    # gather_info()
     # crop_imgs()
     # sample_imgs()
     # img2npz()
-    # npz2img()
+    npz2img()
 
 if __name__ == '__main__':
     start()
