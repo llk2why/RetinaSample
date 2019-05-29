@@ -6,9 +6,8 @@ class Dataset:
     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
     CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'
     MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
-    DATA_NPZ = 'data.npz'
-    # CHOPPED_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Chopped Test'
-    # MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test'
+    CHOPPED_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Chopped Test'
+    MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test'
 
 class YAML:
     CHOP_PATCH = r'.\yamls\chop.yaml'
@@ -19,7 +18,5 @@ def generate_sample_matrix(shape):
     sample = np.random.randint(0,3,shape)
     np.save(save_name,sample)
     print('Generated sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))
-
-# generate_sample_matrix((PATCH_SIZE,PATCH_SIZE))
 
 SAMPLE_MATRIX = np.array(np.load('SampleTemplate.npy'))

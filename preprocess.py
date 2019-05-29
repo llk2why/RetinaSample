@@ -1,6 +1,7 @@
 import os
 import cv2
 import yaml
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -77,70 +78,28 @@ def sample_imgs():
         print('{}'.format(100.0*i/len(pics)),end='\r')
     print('100.0%')
 
-def img2npz():
-    train_tif = [x for x in os.listdir(Dataset.MOSAIC_DIR) if 'tif' in x]
-    test_tif = [x for x in os.listdir(Dataset.MOSAIC_DIR) if 'TIF' in x]
+def splittest():
+    if not os.path.exists(Dataset.CHOPPED_DIR_TEST):
+        os.makedirs(Dataset.CHOPPED_DIR_TEST)
+    if not os.path.exists(Dataset.MOSAIC_DIR_TEST):
+        os.makedirs(Dataset.MOSAIC_DIR_TEST)
     
-    train_x_fpath = [os.path.join(Dataset.MOSAIC_DIR,pic) for pic in train_tif]
-    train_y_fpath = [os.path.join(Dataset.CHOPPED_DIR,pic) for pic in train_tif]
-    test_x_fpath = [os.path.join(Dataset.MOSAIC_DIR,pic) for pic in test_tif]
-    test_y_fpath = [os.path.join(Dataset.CHOPPED_DIR,pic) for pic in test_tif]
-
-    train_x1_fpath = train_x_fpath[:len(train_x_fpath)//2]
-    train_x2_fpath = train_x_fpath[len(train_x_fpath)//2:]
-    train_y1_fpath = train_y_fpath[:len(train_y_fpath)//2]
-    train_y2_fpath = train_y_fpath[len(train_y_fpath)//2:]
-
-    def save_train_x1():
-        train_x1 = np.array([cv2.imread(fpath).transpose(2,0,1) for fpath in train_x1_fpath])
-        np.save('./data/train_x1.npy',train_x1)
-    def save_train_y1():
-        train_y1 = np.array([cv2.imread(fpath).transpose(2,0,1) for fpath in train_y1_fpath])
-        np.save('./data/train_y1.npy',train_y1)
-    def save_train_x2():
-        train_x2 = np.array([cv2.imread(fpath).transpose(2,0,1) for fpath in train_x2_fpath])
-        np.save('./data/train_x2.npy',train_x2)
-    def save_train_y2():
-        train_y2 = np.array([cv2.imread(fpath).transpose(2,0,1) for fpath in train_y2_fpath])
-        np.save('./data/train_y2.npy',train_y2)
-    def save_test_x():
-        test_x = np.array([cv2.imread(fpath).transpose(2,0,1) for fpath in test_x_fpath])
-        np.save('./data/test_x.npy',test_x)
-    def save_test_y():
-        test_y = np.array([cv2.imread(fpath).transpose(2,0,1) for fpath in test_y_fpath])
-        np.save('./data/test_y.npy',test_y)
-
-    save_train_x1()
-    save_train_y1()
-    save_train_x2()
-    save_train_y2()
-    save_test_x()
-    save_test_y()
-
-    with open('./data/train_name1.yaml','w') as f:
-        yaml.dump(train_tif[:len(train_tif)//2],f)
-    with open('./data/train_name2.yaml','w') as f:
-        yaml.dump(train_tif[len(train_tif)//2:],f)
-    with open('./data/test_name1.yaml','w') as f:
-        yaml.dump(test_tif,f)
-
-def npz2img():
-    train_x1 = np.load('./data/train_x1.npy')
-    train_y1 = np.load('./data/train_y1.npy')
-    print(train_x1[0].shape)
-    print(train_x1.dtype)
-    cv2.imshow('t',train_x1[0].transpose(1,2,0))
-    cv2.waitKey(0) 
-    cv2.imshow('t',train_y1[0].transpose(1,2,0))
-    cv2.waitKey(0)
-
+    def move(des,src):
+        TIFs = [x for x in os.listdir(src) if 'TIF' in x]
+        old_paths = [os.path.join(src,x) for x in TIFs]
+        new_paths = [os.path.join(des,x) for x in TIFs]
+        for old_path,new_path in zip(old_paths,new_paths):
+            shutil.move(old_path,new_path)
+         
+    move(Dataset.CHOPPED_DIR_TEST,Dataset.CHOPPED_DIR)
+    move(Dataset.MOSAIC_DIR_TEST,Dataset.MOSAIC_DIR)
+    
 
 def start():
     # gather_info()
     # crop_imgs()
     # sample_imgs()
-    # img2npz()
-    npz2img()
+    splittest()
 
 if __name__ == '__main__':
     start()

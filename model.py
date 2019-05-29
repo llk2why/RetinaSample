@@ -11,9 +11,10 @@ class Reshape(nn.Module):
     def forward(self, x):
         return x.view(self.shape)
 
-# output = (input - kernel_size)/stride + 1
+# output = (input +2*padding - kernel_size)/stride + 1
 def get_padding(input,output,kernel_size,stride):
-    pass
+    padding = ((output-1)*stride+kernel_size-input)//2
+    return padding
 
 class Decoder(nn.Module):
     def __init__(self):
