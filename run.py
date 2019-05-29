@@ -51,7 +51,7 @@ train_loader = DataLoader(dataset=train_data,
                           
 test_loader = DataLoader(dataset=test_data,
                          num_workers=args.threads, 
-                         batch_size=70, 
+                         batch_size=args.batch_size, 
                          shuffle=False)
 
 def train(epoch, model, train_loader, optimizer, criterion):
