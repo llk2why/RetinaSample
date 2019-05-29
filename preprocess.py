@@ -97,8 +97,8 @@ def splittest():
 
 def start():
     # gather_info()
-    # crop_imgs()
-    # sample_imgs()
+    crop_imgs()
+    sample_imgs()
     splittest()
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 import numpy as np
-PATCH_SIZE = 256
-PATCH_STRIDE = 128
+PATCH_SIZE = 128
+PATCH_STRIDE = 64
 
 class Dataset:
     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'

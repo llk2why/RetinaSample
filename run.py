@@ -86,7 +86,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
     
     return train_loss
 
-def evaluate(epoch,model,criterion,loader):
+def evaluate(epoch,model,loader,criterion):
     model.eval()
     loss_list = []
     test_loss = []
@@ -119,4 +119,4 @@ def evaluate(epoch,model,criterion,loader):
 if __name__ == '__main__':
     for epoch in range(1, args.epochs + 1):
         train_loss = train(epoch, model, train_loader, optimizer, criterion)
-        test_loss = evaluate(epoch, model, criterion, test_loader)
+        test_loss = evaluate(epoch, model, test_loader, criterion)
