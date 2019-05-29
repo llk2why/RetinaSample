@@ -52,7 +52,7 @@ train_loader = DataLoader(dataset=train_data,
 test_loader = DataLoader(dataset=test_data,
                          num_workers=args.threads, 
                          batch_size=args.batch_size, 
-                         shuffle=True)
+                         shuffle=False)
 
 def train(epoch, model, train_loader, optimizer, criterion):
     loss_list = []
@@ -89,6 +89,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
 def evaluate(epoch,model,criterion,loader):
     model.eval()
     loss_list = []
+    test_loss = []
     i = 1
     with torch.no_grad():
         for x,y in loader:
