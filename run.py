@@ -86,7 +86,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
     
     return train_loss
 
-def evaluate(model, criterion,loader):
+def evaluate(epoch,model,criterion,loader):
     model.eval()
     i = 1
     with torch.no_grad():
@@ -103,18 +103,18 @@ def evaluate(model, criterion,loader):
             mse = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
             tensor = torch.tensor(255).float().to(device)
             psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
-            train_loss.extend(loss_list)
+            test_loss.extend(loss_list)
 
             if i % args.display_freq == 0:
                 msg = "[TEST]Epoch %02d, Iter [%03d/%03d], test loss = %.4f, PSNR = %.4f" % (
-                    epoch, i, len(train_loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
+                    epoch, i, len(loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
                 )
                 LOG_INFO(msg)
                 loss_list.clear()
             i+=1
-        train_loss = np.mean(loss_list)
+        test_loss = np.mean(loss_list)
     
-    return train_loss
+    return test_loss
 
 if __name__ == '__main__':
     for epoch in range(1, args.epochs + 1):
