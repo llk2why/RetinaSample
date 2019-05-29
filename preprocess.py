@@ -97,7 +97,7 @@ def splittest():
 
 def start():
     # gather_info()
-    crop_imgs()
+    # crop_imgs()
     sample_imgs()
     splittest()
 

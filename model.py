@@ -19,18 +19,18 @@ def get_padding(input,output,kernel_size,stride):
 class Decoder(nn.Module):
     def __init__(self):
         super(Decoder, self).__init__()
-        # 3@256x256 => 64@256x256
-        #           => 32@256x256
-        #           => 1@256x256
+        # 3@128x128 => 64@128x128
+        #           => 32@128x128
+        #           => 1@128x128
 
         self.layers = nn.Sequential(OrderedDict([
-            ('c1', nn.Conv2d(3,64,9,padding=get_padding(256,256,9,1))), 
+            ('c1', nn.Conv2d(3,64,9,padding=get_padding(128,128,9,1))), 
             # ('bn1', nn.BatchNorm2d(64)),
             ('relu1', nn.ReLU()),
-            ('c2', nn.Conv2d(64,32,1,padding=get_padding(256,256,1,1))),
+            ('c2', nn.Conv2d(64,32,1,padding=get_padding(128,128,1,1))),
             # ('bn2', nn.BatchNorm2d(32)),
             ('relu2', nn.ReLU()),
-            ('c3', nn.Conv2d(32,1,5,padding=get_padding(256,256,5,1))),
+            ('c3', nn.Conv2d(32,1,5,padding=get_padding(128,128,5,1))),
             # ('bn3', nn.BatchNorm2d(1)),
             ('relu3', nn.ReLU()),
         ]))
@@ -42,16 +42,16 @@ class Decoder(nn.Module):
 class Decoder2(nn.Module):
     def __init__(self):
         super(Decoder2, self).__init__()
-        # 3@256x256 => 64@256x256
-        #           => 32@256x256
-        #           => 1@256x256
+        # 3@128x128 => 64@128x128
+        #           => 32@128x128
+        #           => 1@128x128
 
         self.layers = nn.Sequential(OrderedDict([
-            ('c1', nn.Conv2d(3,64,9,padding=get_padding(256,256,9,1))), 
+            ('c1', nn.Conv2d(3,64,9,padding=get_padding(128,128,9,1))), 
             ('relu1', nn.ReLU()),
-            ('c2', nn.Conv2d(64,32,1,padding=get_padding(256,256,1,1))),
+            ('c2', nn.Conv2d(64,32,1,padding=get_padding(128,128,1,1))),
             ('relu2', nn.ReLU()),
-            ('c3', nn.Conv2d(32,1,5,padding=get_padding(256,256,5,1))),
+            ('c3', nn.Conv2d(32,1,5,padding=get_padding(128,128,5,1))),
             ('relu3', nn.ReLU()),
         ]))
 
