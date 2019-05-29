@@ -87,36 +87,34 @@ def train(epoch, model, train_loader, optimizer, criterion):
 
 def evaluate(model, criterion,loader):
     model.eval()
-    with torch.no_grad():
-        tdata = test_data.to(device)
-        predictions = model(tdata.float()).cpu()
     i = 1
-    for x,y in train_loader:
-        x,y = x.to(device),y.to(device)
-        optimizer.zero_grad()
-        predictions = model(x.float())
-        loss = criterion(predictions, y.float())
-        loss.backward()
-        optimizer.step()
+    with torch.no_grad():
+        for x,y in loader:
+            x,y = x.to(device),y.to(device)
+            optimizer.zero_grad()
+            predictions = model(x.float())
+            loss = criterion(predictions, y.float())
+            loss.backward()
+            optimizer.step()
 
-        loss_list.append(loss.item())
+            loss_list.append(loss.item())
 
-        psnr = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
-        psnr = 20*torch.log10(255/torch.sqrt(psnr))
-        train_loss.extend(loss_list)
+            psnr = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
+            psnr = 20*torch.log10(255/torch.sqrt(psnr))
+            train_loss.extend(loss_list)
 
-        if i % args.display_freq == 0:
-            msg = "Epoch %02d, Iter [%03d/%03d], train loss = %.4f, PSNR = %.4f" % (
-                epoch, i, len(train_loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
-            )
-            LOG_INFO(msg)
-            loss_list.clear()
-        i+=1
-    train_loss = np.mean(loss_list)
+            if i % args.display_freq == 0:
+                msg = "[TEST]Epoch %02d, Iter [%03d/%03d], test loss = %.4f, PSNR = %.4f" % (
+                    epoch, i, len(train_loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
+                )
+                LOG_INFO(msg)
+                loss_list.clear()
+            i+=1
+        train_loss = np.mean(loss_list)``
     
     return train_loss
 
 if __name__ == '__main__':
     for epoch in range(1, args.epochs + 1):
         train_loss = train(epoch, model, train_loader, optimizer, criterion)
-        # test_loss = evaluate(epoch, model, test_loader)
+        test_loss = evaluate(epoch, model, test_loader)
