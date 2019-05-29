@@ -58,8 +58,8 @@ def crop_imgs():
         patches = chop(img,suffix)
         chop_info[name] = {'{}_{}'.format(name, i): patch for i, patch in enumerate(patches)}
         chop_info[name]['size'] = list(img.shape)
-        print('{:.2f}%'.format(100.0*i/len(tifs)),end='\r')
-    print('100.0%')
+        print('\r{:.2f}%'.format(100.0*i/len(tifs)),end='')
+    print('\r100.0%')
 
     with open(YAML.CHOP_PATCH, 'w') as f:
         yaml.dump(chop_info, f)
@@ -75,8 +75,8 @@ def sample_imgs():
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
         fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR,pic)
         cv2.imwrite(fpath_mosaic,im)
-        print('{:.2f}%'.format(100.0*i/len(pics)),end='\r')
-    print('100.0%')
+        print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
+    print('\r100.0%')
 
 def splittest():
     if not os.path.exists(Dataset.CHOPPED_DIR_TEST):
