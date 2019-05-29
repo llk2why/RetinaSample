@@ -38,3 +38,24 @@ class Decoder(nn.Module):
     def forward(self, input):
         output = self.layers(input)
         return output
+
+class Decoder2(nn.Module):
+    def __init__(self):
+        super(Decoder2, self).__init__()
+        # 3@256x256 => 64@256x256
+        #           => 32@256x256
+        #           => 1@256x256
+
+        self.layers = nn.Sequential(OrderedDict([
+            ('c1', nn.Conv2d(3,64,9,padding=get_padding(256,256,9,1))), 
+            ('relu1', nn.ReLU()),
+            ('c2', nn.Conv2d(64,32,1,padding=get_padding(256,256,1,1))),
+            ('relu2', nn.ReLU()),
+            ('c3', nn.Conv2d(32,1,5,padding=get_padding(256,256,5,1))),
+            ('relu3', nn.ReLU()),
+        ]))
+
+    def forward(self, input):
+        output = self.layers(input)
+        output = input + output
+        return output
