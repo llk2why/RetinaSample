@@ -88,6 +88,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
 
 def evaluate(epoch,model,criterion,loader):
     model.eval()
+    loss_list = []
     i = 1
     with torch.no_grad():
         for x,y in loader:
@@ -95,8 +96,6 @@ def evaluate(epoch,model,criterion,loader):
             optimizer.zero_grad()
             predictions = model(x.float())
             loss = criterion(predictions, y.float())
-            loss.backward()
-            optimizer.step()
 
             loss_list.append(loss.item())
 
@@ -118,5 +117,5 @@ def evaluate(epoch,model,criterion,loader):
 
 if __name__ == '__main__':
     for epoch in range(1, args.epochs + 1):
-        train_loss = train(epoch, model, train_loader, optimizer, criterion)
+        # train_loss = train(epoch, model, train_loader, optimizer, criterion)
         test_loss = evaluate(epoch, model, criterion, test_loader)
