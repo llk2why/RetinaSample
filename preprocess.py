@@ -52,7 +52,7 @@ def crop_imgs():
         
         return patches
     print('Chopping images...')
-    for i,tif, fpath in enumerate(zip(tifs, fpaths)):
+    for i,(tif, fpath) in enumerate(zip(tifs, fpaths)):
         name,suffix = os.path.splitext(tif)
         img = cv2.imread(fpath)
         patches = chop(img,suffix)
