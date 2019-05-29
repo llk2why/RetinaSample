@@ -21,7 +21,7 @@ def gather_info():
     with open('info.txt', 'w', encoding='utf-8') as f:
         f.write('分辨率统计：\n')
         for k, v in resolution.items():
-            f.write('\t{}:{}张'.format(k, v))
+            f.write('\t{}:{}张\n'.format(k, v))
 
 
 def crop_imgs():
@@ -135,7 +135,7 @@ def npz2img():
 
 
 def start():
-    # gather_info()
+    gather_info()
     # crop_imgs()
     # sample_imgs()
     # img2npz()
