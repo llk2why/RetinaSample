@@ -18,5 +18,5 @@ def generate_sample_matrix(shape):
     sample = np.random.randint(0,3,shape)
     np.save(save_name,sample)
     print('Generated sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))
-
+generate_sample_matrix((PATCH_SIZE,PATCH_SIZE))
 SAMPLE_MATRIX = np.array(np.load('SampleTemplate.npy'))
