@@ -43,8 +43,10 @@ def crop_imgs():
             jrange.append(c-PATCH_SIZE)
         for i in irange:
             for j in jrange:
-                im = img[i:i + PATCH_SIZE, j:j + PATCH_SIZE]
                 fpath = os.path.join(Dataset.CHOPPED_DIR, '{}_{}{}'.format(name, cnt,suffix))
+                if os.path.exists(fpath):
+                    continue
+                im = img[i:i + PATCH_SIZE, j:j + PATCH_SIZE]
                 cv2.imwrite(fpath,im)
                 patches.append([[i, j], [i + PATCH_SIZE, j + PATCH_SIZE]])
                 cnt += 1
@@ -70,13 +72,30 @@ def sample_imgs():
     pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'tif' in x.lower()]
     for i,pic in enumerate(pics):
         fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
+        fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR,pic)
+        if os.path.exists(fpath_mosaic):
+            continue
         img = cv2.imread(fpath)
         
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
-        fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR,pic)
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
     print('\r100.0%')
+
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR_TEST) if 'tif' in x.lower()]
+    for i,pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR_TEST,pic)
+        fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR_TEST,pic)
+        if os.path.exists(fpath_mosaic):
+            continue
+        img = cv2.imread(fpath)
+        
+        im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
+        fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR_TEST,pic)
+        cv2.imwrite(fpath_mosaic,im)
+        print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
+    print('\r100.0%')
+    
 
 def splittest():
     if not os.path.exists(Dataset.CHOPPED_DIR_TEST):
