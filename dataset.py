@@ -1,5 +1,7 @@
 import torch.utils.data as data
 import numpy as np
+import cv2
+import torch
 
 from os import listdir
 from os.path import join
@@ -10,7 +12,9 @@ def is_image_file(filename):
 
 def load_img(filepath):
     # img = np.array(Image.open(filepath)).transpose(2,0,1)
-    img = np.array(Image.open(filepath))
+    # img = np.array(Image.open(filepath))
+    img = cv2.imread(filepath).transpose(2,0,1)
+    img = torch.tensor(img).float()
     return img
 
 
@@ -31,8 +35,15 @@ class DatasetFromFolder(data.Dataset):
             input = self.input_transform(input)
         if self.target_transform:
             target = self.target_transform(target)
-
+        
+        # print(torch.max(input))
+        # print(torch.max(target))
         return input, target
 
     def __len__(self):
-        return len(self.image_train_filenames)
+        return len(self.filenames)
+
+# img = np.array(Image.open(r'C:\data\dataset\Sandwich 0612 fullsize Chopped\H1_0.tif'))
+# # img = cv2.imread(r'C:\data\dataset\Sandwich 0612 fullsize Chopped\SDIM1952_407.tif')
+# cv2.imshow('t',img)
+# cv2.waitKey(0)

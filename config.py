@@ -8,6 +8,7 @@ class Dataset:
     MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
     CHOPPED_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Chopped Test'
     MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test'
+    RESULT = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Reconstruct'
 
 class YAML:
     CHOP_PATCH = r'.\yamls\chop.yaml'
