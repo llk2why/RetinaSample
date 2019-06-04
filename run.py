@@ -23,12 +23,12 @@ from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_labels", default=4, type=int, help="Number of labels.")
 parser.add_argument("--epochs", default=50, type=int, help="Number of epoch.")
-parser.add_argument("--batch_size", default=50, type=int, help="Batch size to use during training.")
+parser.add_argument("--batch_size", default=20, type=int, help="Batch size to use during training.")
 parser.add_argument("--display_freq", default=50, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.01, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
-parser.add_argument("--model_type", default='Decoder', type=str,
-                    choices=['Decoder2'], help="Available models")
+parser.add_argument("--model_type", default='DemosaicSR', type=str,
+                    choices=['DemosaicSR'], help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
 
@@ -70,8 +70,8 @@ def train(epoch, model, train_loader, optimizer, criterion):
 
         loss_list.append(loss.item())
 
-        mse = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
-        tensor = torch.tensor(255).float().to(device)
+        mse = torch.mean(torch.pow(y-predictions,2),dim=[1,2,3])
+        tensor = torch.tensor(1).float().to(device)
         psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
         train_loss.extend(loss_list)
 

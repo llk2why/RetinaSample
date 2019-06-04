@@ -10,7 +10,9 @@ def is_image_file(filename):
 
 def load_img(filepath):
     # img = np.array(Image.open(filepath)).transpose(2,0,1)
-    img = np.array(Image.open(filepath))
+    # img = np.array(Image.open(filepath))
+    img = Image.open(filepath).convert('RGB')
+    
     return img
 
 

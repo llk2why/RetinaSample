@@ -1,7 +1,33 @@
 import torch
 import torch.nn as nn
+
+import torchvision
+import torchvision.transforms as transforms
+import numpy as np
+
+
 from torch.autograd import Variable
 from collections import OrderedDict
+
+
+class ResidualBlock(nn.Module):
+    def __init__(self):
+        super(ResidualBlock,self).__init__()
+        self.left = nn.Sequential(OrderedDict([
+            ('c1',nn.Conv2d(in_channels=256, out_channels=256, 
+                            kernel_size=3, stride=1, padding=1, bias=True)),
+            ('relu1',nn.PReLU()),
+            ('c2',nn.Conv2d(in_channels=256, out_channels=256, 
+                            kernel_size=3, stride=1, padding=1, bias=True)),
+        ]))
+        self.shortcut = nn.Sequential()
+        self.activate = nn.PReLU()
+    
+    def forward(self,input):
+        output = self.left(input)
+        output += self.shortcut(input)
+        output = self.activate(input)
+        return output
 
 class Reshape(nn.Module):
     def __init__(self, args):
@@ -16,46 +42,37 @@ def get_padding(input,output,kernel_size,stride):
     padding = ((output-1)*stride+kernel_size-input)//2
     return padding
 
-class Decoder(nn.Module):
-    def __init__(self):
-        super(Decoder, self).__init__()
-        # 3@128x128 => 64@128x128
-        #           => 32@128x128
-        #           => 1@128x128
+class DemosaicSR(nn.Module):
+    def __init__(self,resnet_level=2):
+        super(DemosaicSR, self).__init__()
 
-        self.layers = nn.Sequential(OrderedDict([
-            ('c1', nn.Conv2d(3,64,9,padding=get_padding(128,128,9,1))), 
-            # ('bn1', nn.BatchNorm2d(64)),
-            ('relu1', nn.ReLU()),
-            ('c2', nn.Conv2d(64,32,1,padding=get_padding(128,128,1,1))),
-            # ('bn2', nn.BatchNorm2d(32)),
-            ('relu2', nn.ReLU()),
-            ('c3', nn.Conv2d(32,1,5,padding=get_padding(128,128,5,1))),
-            # ('bn3', nn.BatchNorm2d(1)),
-            ('relu3', nn.ReLU()),
+        self.stage1 = nn.Sequential(OrderedDict([
+            ('stage1_1_conv4x4 ',nn.Conv2d(in_channels=1, out_channels=256,
+                            kernel_size=4, stride=2, padding=1, bias=True)),
+            ('stage1_2_SP_conv ',nn.PixelShuffle(2)),
+            ('stage1_2_conv4x4',nn.Conv2d(in_channels=64, out_channels=256,
+                            kernel_size=3, stride=1, padding=1, bias=True)),
+            ('stage1_2_PReLU',nn.PReLU())
         ]))
+        stage2 = [ResidualBlock() for i in range(resnet_level)]
+        self.stage2 = nn.Sequential(*stage2)
+        self.stage3 = nn.Sequential(OrderedDict([
+            # ('stage3_1_SP_conv ',nn.PixelShuffle(2)),
+            ('stage3_2_conv3x3 ',nn.Conv2d(in_channels=256, out_channels=256,
+                            kernel_size=3, stride=1, padding=1, bias=True)),
+            ('stage3_2_PReLU',nn.PReLU()),
+            ('stage3_3_conv3x3',nn.Conv2d(in_channels=256, out_channels=3,
+                            kernel_size=3, stride=1, padding=1, bias=True))
+        ]))
+        
 
     def forward(self, input):
-        output = self.layers(input)
-        return output
-
-class Decoder2(nn.Module):
-    def __init__(self):
-        super(Decoder2, self).__init__()
-        # 3@128x128 => 64@128x128
-        #           => 32@128x128
-        #           => 1@128x128
-
-        self.layers = nn.Sequential(OrderedDict([
-            ('c1', nn.Conv2d(3,64,9,padding=get_padding(128,128,9,1))), 
-            ('relu1', nn.ReLU()),
-            ('c2', nn.Conv2d(64,32,1,padding=get_padding(128,128,1,1))),
-            ('relu2', nn.ReLU()),
-            ('c3', nn.Conv2d(32,1,5,padding=get_padding(128,128,5,1))),
-            ('relu3', nn.ReLU()),
-        ]))
-
-    def forward(self, input):
-        output = self.layers(input)
-        output = input + output
+        output = torch.sum(input,dim=1,keepdim=True)
+        # print(output.shape)
+        output = self.stage1(output)
+        # print(output.shape)
+        output = self.stage2(output)
+        # print(output.shape)
+        output = self.stage3(output)
+        # print(output.shape)
         return output

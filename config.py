@@ -6,10 +6,10 @@ class Dataset:
     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
     CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'
     # MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
-    MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Deep Joint'
+    MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Deep DM_SR'
     CHOPPED_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Chopped Test'
     # MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test'
-    MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test Deep Joint'
+    MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test Deep DM_SR'
 
 class YAML:
     CHOP_PATCH = r'.\yamls\chop.yaml'
@@ -23,7 +23,7 @@ def generate_sample_matrix(shape):
 
 def generate_bayer_sample_matrix(shape):
     save_name = 'BayerTemplate.npy'
-    tile = np.array([[1,2],[0,1]])
+    tile = np.array([[0,1],[1,2]])
     sample = np.tile(tile,np.array(shape)//2)
     np.save(save_name,sample)
     print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))

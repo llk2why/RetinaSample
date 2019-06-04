@@ -73,8 +73,8 @@ def sample_imgs():
     for i,pic in enumerate(pics):
         fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
         fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR,pic)
-        if os.path.exists(fpath_mosaic):
-            continue
+        # if os.path.exists(fpath_mosaic):
+        #     continue
         img = cv2.imread(fpath)
         
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
@@ -86,8 +86,8 @@ def sample_imgs():
     for i,pic in enumerate(pics):
         fpath = os.path.join(Dataset.CHOPPED_DIR_TEST,pic)
         fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR_TEST,pic)
-        if os.path.exists(fpath_mosaic):
-            continue
+        # if os.path.exists(fpath_mosaic):
+        #     continue
         img = cv2.imread(fpath)
         
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
