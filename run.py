@@ -23,7 +23,7 @@ from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_labels", default=4, type=int, help="Number of labels.")
-parser.add_argument("--epochs", default=2, type=int, help="Number of epoch.")
+parser.add_argument("--epochs", default=5, type=int, help="Number of epoch.")
 parser.add_argument("--batch_size", default=10, type=int, help="Batch size to use during training.")
 parser.add_argument("--display_freq", default=20, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.01, type=float, help="Learning rate for optimizer")
@@ -133,7 +133,7 @@ def main():
     LOG_INFO('===> Begin training and testing')
     for epoch in range(1, args.epochs + 1):
         train_loss = train(epoch, net, train_loader, optimizer, criterion)
-        test_loss = evaluate(epoch, net, test_loader, criterion)
+        # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')    
     test_loss = evaluate(0, net, test_loader, criterion,save=True,names=test_data.filenames)
 
