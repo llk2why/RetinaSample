@@ -81,7 +81,7 @@ def sample_imgs():
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
-    print('\r100.0%')
+    print('\r100.0% ')
 
     pics = [x for x in os.listdir(Dataset.CHOPPED_DIR_TEST) if 'tif' in x.lower()]
     for i,pic in enumerate(pics):

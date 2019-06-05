@@ -26,7 +26,7 @@ class ResidualBlock(nn.Module):
     def forward(self,input):
         output = self.left(input)
         output += self.shortcut(input)
-        output = self.activate(input)
+        output = self.activate(output)
         return output
 
 class Reshape(nn.Module):

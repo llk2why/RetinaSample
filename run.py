@@ -108,7 +108,7 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
 def main():
     LOG_INFO('===> Building model')
     net = model.__dict__[args.model_type]().to(device)
-    optimizer = optim.Adam(net.parameters(), lr=args.lr)
+    optimizer = optim.Adam(net.parameters(), lr=args.lr,betas=(0.9,0.999),eps=1e-08)
     criterion = nn.MSELoss()
 
     LOG_INFO('===> Loading datasets')
