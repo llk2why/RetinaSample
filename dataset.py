@@ -1,5 +1,6 @@
 import torch.utils.data as data
 import numpy as np
+import cv2
 
 from os import listdir
 from os.path import join
@@ -11,7 +12,9 @@ def is_image_file(filename):
 def load_img(filepath):
     # img = np.array(Image.open(filepath)).transpose(2,0,1)
     # img = np.array(Image.open(filepath))
-    img = Image.open(filepath).convert('RGB')
+    # img = Image.open(filepath).convert('RGB')
+    # img = Image.open(filepath).convert('RGB')
+    img = cv2.imread(filepath)
     
     return img
 

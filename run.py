@@ -23,7 +23,7 @@ from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_labels", default=4, type=int, help="Number of labels.")
-parser.add_argument("--epochs", default=5, type=int, help="Number of epoch.")
+parser.add_argument("--epochs", default=1, type=int, help="Number of epoch.")
 parser.add_argument("--batch_size", default=8, type=int, help="Batch size to use during training.")
 parser.add_argument("--display_freq", default=20, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
@@ -44,6 +44,13 @@ def train(epoch, model, train_loader, optimizer, criterion):
     i = 1
     for x,y in train_loader:
         x,y = x.to(device),y.to(device)
+        
+        # p = x[0].clone().cpu().numpy().transpose(1,2,0)
+        # q = y[0].clone().cpu().numpy().transpose(1,2,0)
+        # cv2.imwrite('x.png',(p*255).astype(np.uint8))
+        # cv2.imwrite('y.png',(q*255).astype(np.uint8))
+        # exit()
+
         optimizer.zero_grad()
         predictions = model(x.float())
         loss = criterion(predictions, y.float())
@@ -57,7 +64,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
         psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
         train_loss.extend(loss_list)
         if i % args.display_freq == 0:
-            msg = "Epoch %02d, Iter [%03d/%03d], train loss = %.4f, PSNR = %.4f" % (
+            msg = "Epoch %02d, Iter [%03d/%03d], train loss = %.8f, PSNR = %.4f" % (
                 epoch, i, len(train_loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
             )
             LOG_INFO(msg)
@@ -86,7 +93,7 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
             test_loss.extend(loss_list)
 
             if i % args.display_freq == 0:
-                msg = "[TEST]Epoch %02d, Iter [%03d/%03d], test loss = %.4f, PSNR = %.4f" % (
+                msg = "[TEST]Epoch %02d, Iter [%03d/%03d], test loss = %.8f, PSNR = %.4f" % (
                     epoch, i, len(loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
                 )
                 LOG_INFO(msg)
@@ -94,13 +101,16 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
             if save:
                 if not os.path.exists(Dataset.RESULT):
                     os.makedirs(Dataset.RESULT)
-                predictions = (predictions.cpu().numpy()).astype(np.uint8).transpose(0,2,3,1)
+                predictions = (predictions.cpu().numpy()).transpose(0,2,3,1)
                 n = predictions.shape[0]
                 if not os.path.exists(Dataset.RESULT):
                     os.makedirs(Dataset.RESULT)
                 for j in range(n):
                     fpath = os.path.join(Dataset.RESULT,names[j+args.batch_size*(i-1)])
-                    img = (predictions[j]*255).astype(np.uint8)
+                    img = (predictions[j]*255)
+                    img[img>255]=255
+                    img[img<0]=0
+                    img = img.astype(np.uint8)
                     cv2.imwrite(fpath,img)
             i+=1
         test_loss = np.mean(loss_list)
@@ -109,7 +119,7 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
 
 def main():
     LOG_INFO('===> Building model')
-    net = model.__dict__[args.model_type]().to(device)
+    net = model.__dict__[args.model_type](4).to(device)
     optimizer = optim.Adam(net.parameters(), lr=args.lr,betas=(0.9,0.999),eps=1e-08)
     criterion = nn.MSELoss()
 
@@ -136,6 +146,6 @@ def main():
         # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')    
     test_loss = evaluate(0, net, test_loader, criterion,save=True,names=test_data.filenames)
-
+    torch.save(net.state_dict(), 'model_epoch={}.pth'.format(args.epochs))
 if __name__ == '__main__':
     main()
