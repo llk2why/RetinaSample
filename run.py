@@ -92,6 +92,8 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
                 LOG_INFO(msg)
                 loss_list.clear()
             if save:
+                if not os.path.exists(Dataset.RESULT):
+                    os.makedirs(Dataset.RESULT)
                 predictions = (predictions.cpu().numpy()).astype(np.uint8).transpose(0,2,3,1)
                 n = predictions.shape[0]
                 if not os.path.exists(Dataset.RESULT):
