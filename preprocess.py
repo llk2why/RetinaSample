@@ -70,6 +70,8 @@ def crop_imgs():
 def sample_imgs():
     if not os.path.exists(Dataset.MOSAIC_DIR):
         os.makedirs(Dataset.MOSAIC_DIR)
+    if not os.path.exists(Dataset.MOSAIC_DIR_TEST):
+        os.makedirs(Dataset.MOSAIC_DIR_TEST)
     pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'tif' in x.lower()]
     for i,pic in enumerate(pics):
         fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
