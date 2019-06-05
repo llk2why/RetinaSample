@@ -8,12 +8,12 @@ plat = platform.system()
 root = r'C:\data\dataset' if plat == 'Windows' else '~/data'
     
 class Dataset:
-    RAW_DIR = os.path.join(root,'Sandwich 0612 fullsize')
-    CHOPPED_DIR = os.path.join(root,'Sandwich 0612 fullsize Chopped')
-    MOSAIC_DIR = os.path.join(root,'Sandwich 0612 fullsize Mosaic Deep DM_SR')
-    CHOPPED_DIR_TEST = os.path.join(root,'Sandwich 0612 fullsize Chopped Test')
-    MOSAIC_DIR_TEST = os.path.join(root,'Sandwich 0612 fullsize Mosaic Test Deep DM_SR')
-    RESULT = os.path.join(root,'Sandwich 0612 fullsize Mosaic Reconstruct Deep DM_SR')
+    RAW_DIR = os.path.join(root,r'Sandwich 0612 fullsize')
+    CHOPPED_DIR = os.path.join(root,r'Sandwich 0612 fullsize Chopped')
+    MOSAIC_DIR = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Deep DM_SR')
+    CHOPPED_DIR_TEST = os.path.join(root,r'Sandwich 0612 fullsize Chopped Test')
+    MOSAIC_DIR_TEST = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Test Deep DM_SR')
+    RESULT = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Reconstruct Deep DM_SR')
 
 """     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
     CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'

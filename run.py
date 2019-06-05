@@ -26,7 +26,7 @@ parser.add_argument("--n_labels", default=4, type=int, help="Number of labels.")
 parser.add_argument("--epochs", default=1, type=int, help="Number of epoch.")
 parser.add_argument("--batch_size", default=30, type=int, help="Batch size to use during training.")
 parser.add_argument("--display_freq", default=50, type=int, help="Display frequency")
-parser.add_argument("--lr", default=0.01, type=float, help="Learning rate for optimizer")
+parser.add_argument("--lr", default=0.005, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
 parser.add_argument("--model_type", default='DemosaicSR', type=str,
                     choices=['DemosaicSR'], help="Available models")
