@@ -1,3 +1,4 @@
+#-*- coding=utf8 -*-
 import os
 import cv2
 import yaml
@@ -118,7 +119,7 @@ def start():
     # gather_info()
     # crop_imgs()
     sample_imgs()
-    splittest()
+    # splittest()
 
 if __name__ == '__main__':
     start()

@@ -1,4 +1,5 @@
 import os
+import cv2
 import torch
 import argparse
 import numpy as np
@@ -22,8 +23,8 @@ from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_labels", default=4, type=int, help="Number of labels.")
-parser.add_argument("--epochs", default=50, type=int, help="Number of epoch.")
-parser.add_argument("--batch_size", default=20, type=int, help="Batch size to use during training.")
+parser.add_argument("--epochs", default=1, type=int, help="Number of epoch.")
+parser.add_argument("--batch_size", default=30, type=int, help="Batch size to use during training.")
 parser.add_argument("--display_freq", default=50, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.01, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
@@ -34,25 +35,6 @@ args = parser.parse_args()
 
 use_gpu = torch.cuda.is_available()
 device = 'cuda' if use_gpu else 'cpu'
-model = model.__dict__[args.model_type]().to(device)
-optimizer = optim.Adam(model.parameters(), lr=args.lr)
-criterion = nn.MSELoss()
-
-train_data = DatasetFromFolder(Dataset.CHOPPED_DIR,Dataset.MOSAIC_DIR,
-                               input_transform=Compose([ToTensor()]),
-                               target_transform=Compose([ToTensor()]))
-test_data = DatasetFromFolder(Dataset.CHOPPED_DIR_TEST,Dataset.MOSAIC_DIR_TEST,
-                               input_transform=Compose([ToTensor()]),
-                               target_transform=Compose([ToTensor()]))
-train_loader = DataLoader(dataset=train_data, 
-                          num_workers=args.threads, 
-                          batch_size=args.batch_size, 
-                          shuffle=True)
-                          
-test_loader = DataLoader(dataset=test_data,
-                         num_workers=args.threads, 
-                         batch_size=args.batch_size, 
-                         shuffle=False)
 
 def train(epoch, model, train_loader, optimizer, criterion):
     loss_list = []
@@ -74,7 +56,6 @@ def train(epoch, model, train_loader, optimizer, criterion):
         tensor = torch.tensor(1).float().to(device)
         psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
         train_loss.extend(loss_list)
-
         if i % args.display_freq == 0:
             msg = "Epoch %02d, Iter [%03d/%03d], train loss = %.4f, PSNR = %.4f" % (
                 epoch, i, len(train_loader), np.mean(loss_list),np.mean(torch.mean(psnr).item())
@@ -86,7 +67,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
     
     return train_loss
 
-def evaluate(epoch,model,loader,criterion):
+def evaluate(epoch,model,loader,criterion,save=False,names=None):
     model.eval()
     loss_list = []
     test_loss = []
@@ -94,14 +75,13 @@ def evaluate(epoch,model,loader,criterion):
     with torch.no_grad():
         for x,y in loader:
             x,y = x.to(device),y.to(device)
-            optimizer.zero_grad()
             predictions = model(x.float())
             loss = criterion(predictions, y.float())
 
             loss_list.append(loss.item())
 
-            mse = torch.sum(torch.pow(y-predictions,2),dim=[1,2,3])
-            tensor = torch.tensor(255).float().to(device)
+            mse = torch.mean(torch.pow(y-predictions,2),dim=[1,2,3])
+            tensor = torch.tensor(1).float().to(device)
             psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
             test_loss.extend(loss_list)
 
@@ -111,12 +91,49 @@ def evaluate(epoch,model,loader,criterion):
                 )
                 LOG_INFO(msg)
                 loss_list.clear()
+            if save:
+                predictions = (predictions.cpu().numpy()).astype(np.uint8).transpose(0,2,3,1)
+                n = predictions.shape[0]
+                if not os.path.exists(Dataset.RESULT):
+                    os.makedirs(Dataset.RESULT)
+                for j in range(n):
+                    fpath = os.path.join(Dataset.RESULT,names[j+args.batch_size*(i-1)])
+                    img = (predictions[j]*255).astype(np.uint8)
+                    cv2.imwrite(fpath,img)
             i+=1
         test_loss = np.mean(loss_list)
     
     return test_loss
 
-if __name__ == '__main__':
+def main():
+    LOG_INFO('===> Building model')
+    net = model.__dict__[args.model_type]().to(device)
+    optimizer = optim.Adam(net.parameters(), lr=args.lr)
+    criterion = nn.MSELoss()
+
+    LOG_INFO('===> Loading datasets')
+    train_data = DatasetFromFolder(Dataset.CHOPPED_DIR,Dataset.MOSAIC_DIR,
+                                input_transform=Compose([ToTensor()]),
+                                target_transform=Compose([ToTensor()]))
+    test_data = DatasetFromFolder(Dataset.CHOPPED_DIR_TEST,Dataset.MOSAIC_DIR_TEST,
+                                input_transform=Compose([ToTensor()]),
+                                target_transform=Compose([ToTensor()]))
+    train_loader = DataLoader(dataset=train_data, 
+                            num_workers=args.threads, 
+                            batch_size=args.batch_size, 
+                            shuffle=True)
+                            
+    test_loader = DataLoader(dataset=test_data,
+                            num_workers=args.threads, 
+                            batch_size=args.batch_size, 
+                            shuffle=False)
+
+    LOG_INFO('===> Begin training and testing')
     for epoch in range(1, args.epochs + 1):
-        train_loss = train(epoch, model, train_loader, optimizer, criterion)
-        test_loss = evaluate(epoch, model, test_loader, criterion)
+        train_loss = train(epoch, net, train_loader, optimizer, criterion)
+        test_loss = evaluate(epoch, net, test_loader, criterion)
+    LOG_INFO('===> FINISH TRAINING')    
+    test_loss = evaluate(0, net, test_loader, criterion,save=True,names=test_data.filenames)
+
+if __name__ == '__main__':
+    main()
