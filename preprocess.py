@@ -79,7 +79,6 @@ def sample_imgs():
         # if os.path.exists(fpath_mosaic):
         #     continue
         img = cv2.imread(fpath)
-        
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
@@ -92,12 +91,10 @@ def sample_imgs():
         # if os.path.exists(fpath_mosaic):
         #     continue
         img = cv2.imread(fpath)
-        
         im = np.stack([np.where(SAMPLE_MATRIX==i,img[:,:,i], 0) for i in range(3)],axis=-1)
-        fpath_mosaic = os.path.join(Dataset.MOSAIC_DIR_TEST,pic)
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
-    print('\r100.0%')
+    print('\r100.0% ')
     
 
 def splittest():
