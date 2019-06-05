@@ -19,7 +19,7 @@ def load_img(filepath):
 class DatasetFromFolder(data.Dataset):
     def __init__(self, train_dir,target_dir, input_transform=None, target_transform=None):
         super(DatasetFromFolder, self).__init__()
-        self.filenames = [x for x in listdir(train_dir) if is_image_file(x)][:200]
+        self.filenames = [x for x in listdir(train_dir) if is_image_file(x)]
         self.image_train_filenames = [join(train_dir, x) for x in self.filenames]
         self.image_target_filenames = [join(target_dir, x) for x in self.filenames]
 
