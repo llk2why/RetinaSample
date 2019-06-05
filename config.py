@@ -5,7 +5,7 @@ PATCH_SIZE = 128
 PATCH_STRIDE = 64
 
 plat = platform.system()
-root = r'C:\data\dataset' if plat == 'Windows' else '~/data'
+root = r'C:\data\dataset' if plat == 'Windows' else '/home/lincoln/data'
     
 class Dataset:
     RAW_DIR = os.path.join(root,r'Sandwich 0612 fullsize')
