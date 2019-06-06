@@ -20,14 +20,18 @@ def load_img(filepath):
 
 
 class DatasetFromFolder(data.Dataset):
-    def __init__(self, train_dir,target_dir, input_transform=None, target_transform=None):
+    def __init__(self, train_dir,target_dir,model_type=None, input_transform=None, target_transform=None,debug=False):
         super(DatasetFromFolder, self).__init__()
         self.filenames = [x for x in listdir(train_dir) if is_image_file(x)]
+        if debug:
+            self.filenames = self.filenames[:400]
         self.image_train_filenames = [join(train_dir, x) for x in self.filenames]
         self.image_target_filenames = [join(target_dir, x) for x in self.filenames]
 
         self.input_transform = input_transform
         self.target_transform = target_transform
+
+        self.model_type = model_type
 
     def __getitem__(self, index):
         input = load_img(self.image_train_filenames[index])
@@ -36,6 +40,10 @@ class DatasetFromFolder(data.Dataset):
             input = self.input_transform(input)
         if self.target_transform:
             target = self.target_transform(target)
+        if self.model_type == 'RYYB':
+            input = input.float()
+            r,g = input[:,:,0],input[:,:,1]
+            g[g>0],r[g>0] = r[g>0]+g[g>0],0
 
         return input, target
 

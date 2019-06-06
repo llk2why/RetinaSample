@@ -6,3 +6,8 @@ data
 __pycache__
 *.pyc
 *.pth
+tmp.py
+*.txt
+joint*
+*.jpg
+*.png

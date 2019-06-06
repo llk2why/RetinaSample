@@ -28,8 +28,8 @@ parser.add_argument("--batch_size", default=8, type=int, help="Batch size to use
 parser.add_argument("--display_freq", default=20, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
-parser.add_argument("--model_type", default='DemosaicSR', type=str,
-                    choices=['DemosaicSR'], help="Available models")
+parser.add_argument("--model_type", default='RYYB', type=str,
+                    choices=['DemosaicSR','RYYB'], help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
 
@@ -98,15 +98,21 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
                 )
                 LOG_INFO(msg)
                 loss_list.clear()
+
             if save:
-                if not os.path.exists(Dataset.RESULT):
-                    os.makedirs(Dataset.RESULT)
+                # print('saving..')
+                if args.model_type == 'DemosaicSR':
+                    result_dir = Dataset.RESULT
+                elif args.model_type == 'RYYB':
+                    result_dir = Dataset.RYYB_RESULT
+                if not os.path.exists(result_dir):
+                    os.makedirs(result_dir)
                 predictions = (predictions.cpu().numpy()).transpose(0,2,3,1)
                 n = predictions.shape[0]
-                if not os.path.exists(Dataset.RESULT):
-                    os.makedirs(Dataset.RESULT)
+                if not os.path.exists(result_dir):
+                    os.makedirs(result_dir)
                 for j in range(n):
-                    fpath = os.path.join(Dataset.RESULT,names[j+args.batch_size*(i-1)])
+                    fpath = os.path.join(result_dir,names[j+args.batch_size*(i-1)])
                     img = (predictions[j]*255)
                     img[img>255]=255
                     img[img<0]=0
@@ -122,14 +128,26 @@ def main():
     net = model.__dict__[args.model_type](4).to(device)
     optimizer = optim.Adam(net.parameters(), lr=args.lr,betas=(0.9,0.999),eps=1e-08)
     criterion = nn.MSELoss()
+    
+    if args.model_type == 'DemosaicSR':
+        train_x_dir = Dataset.MOSAIC_DIR
+        test_x_dir = Dataset.MOSAIC_DIR_TEST
+    elif args.model_type == 'RYYB':
+        train_x_dir = Dataset.RYYB_MOSAIC_DIR
+        test_x_dir = Dataset.RYYB_MOSAIC_DIR_TEST
+
+    train_y_dir = Dataset.CHOPPED_DIR
+    test_y_dir = Dataset.CHOPPED_DIR_TEST
 
     LOG_INFO('===> Loading datasets')
-    train_data = DatasetFromFolder(Dataset.MOSAIC_DIR,Dataset.CHOPPED_DIR,
+    train_data = DatasetFromFolder(train_x_dir,train_y_dir,args.model_type,
                                 input_transform=Compose([ToTensor()]),
-                                target_transform=Compose([ToTensor()]))
-    test_data = DatasetFromFolder(Dataset.MOSAIC_DIR_TEST,Dataset.CHOPPED_DIR_TEST,
+                                target_transform=Compose([ToTensor()]),
+                                debug=args.debug)
+    test_data = DatasetFromFolder(test_x_dir,test_y_dir,args.model_type,
                                 input_transform=Compose([ToTensor()]),
-                                target_transform=Compose([ToTensor()]))
+                                target_transform=Compose([ToTensor()]),
+                                debug=args.debug)
     train_loader = DataLoader(dataset=train_data, 
                             num_workers=args.threads, 
                             batch_size=args.batch_size, 
@@ -146,6 +164,6 @@ def main():
         # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')    
     test_loss = evaluate(0, net, test_loader, criterion,save=True,names=test_data.filenames)
-    torch.save(net.state_dict(), 'model_epoch={}.pth'.format(args.epochs))
+    torch.save(net.state_dict(), '{}_model_epoch={}.pth'.format(args.model_type,args.epochs))
 if __name__ == '__main__':
     main()
