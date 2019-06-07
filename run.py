@@ -28,8 +28,8 @@ parser.add_argument("--batch_size", default=8, type=int, help="Batch size to use
 parser.add_argument("--display_freq", default=20, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
-parser.add_argument("--model_type", default='RYYB', type=str,
-                    choices=['DemosaicSR','RYYB'], help="Available models")
+parser.add_argument("--model_type", default='Random', type=str,
+                    choices=['DemosaicSR','RYYB','Random'], help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
 
@@ -105,6 +105,8 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
                     result_dir = Dataset.RESULT
                 elif args.model_type == 'RYYB':
                     result_dir = Dataset.RYYB_RESULT
+                elif args.model_type == 'Random':
+                    result_dir = Dataset.Random_RESULT
                 if not os.path.exists(result_dir):
                     os.makedirs(result_dir)
                 predictions = (predictions.cpu().numpy()).transpose(0,2,3,1)
@@ -135,6 +137,9 @@ def main():
     elif args.model_type == 'RYYB':
         train_x_dir = Dataset.RYYB_MOSAIC_DIR
         test_x_dir = Dataset.RYYB_MOSAIC_DIR_TEST
+    elif args.model_type == 'Random':
+        train_x_dir = Dataset.Random_MOSAIC_DIR
+        test_x_dir = Dataset.Random_MOSAIC_DIR_TEST
 
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST
