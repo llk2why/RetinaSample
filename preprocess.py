@@ -119,6 +119,30 @@ def sample_ryyb_imgs():
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
     print('\r100.0% ')
+
+def sample_random_imgs():
+    if not os.path.exists(Dataset.Random_MOSAIC_DIR):
+        os.makedirs(Dataset.Random_MOSAIC_DIR)
+    if not os.path.exists(Dataset.Random_MOSAIC_DIR_TEST):
+        os.makedirs(Dataset.Random_MOSAIC_DIR_TEST)
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'tif' in x.lower()]
+    for i,pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
+        fpath_mosaic = os.path.join(Dataset.Random_MOSAIC_DIR,pic)
+        img = cv2.imread(fpath)
+        im = img*RYYB_SAMPLE_MATRIX
+        cv2.imwrite(fpath_mosaic,im)
+        print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
+    print('\r100.0% ')
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR_TEST) if 'tif' in x.lower()]
+    for i,pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR_TEST,pic)
+        fpath_mosaic = os.path.join(Dataset.Random_MOSAIC_DIR_TEST,pic)
+        img = cv2.imread(fpath)
+        im = img*RYYB_SAMPLE_MATRIX
+        cv2.imwrite(fpath_mosaic,im)
+        print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
+    print('\r100.0% ')
     
 
 def splittest():
@@ -143,7 +167,8 @@ def start():
     # crop_imgs()
     # splittest()
     # sample_imgs()
-    sample_ryyb_imgs()
+    # sample_ryyb_imgs()
+    sample_random_imgs()
 
 if __name__ == '__main__':
     start()

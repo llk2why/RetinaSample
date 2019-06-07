@@ -23,6 +23,11 @@ class Dataset:
     RYYB_MOSAIC_DIR_TEST = os.path.join(root,r'Sandwich 0612 fullsize RYYB Mosaic TEST')
     RYYB_RESULT = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Reconstruct RYYB')
 
+    ##[INPUT] train Random input dir & test Random input dir
+    Random_MOSAIC_DIR = os.path.join(root,r'Sandwich 0612 fullsize Random Mosaic')
+    Random_MOSAIC_DIR_TEST = os.path.join(root,r'Sandwich 0612 fullsize Random Mosaic TEST')
+    Random_RESULT = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Reconstruct Random')
+
 """     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
     CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'
     # MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
@@ -59,9 +64,27 @@ def generate_ryyb_sample_matrix(shape):
     np.save(save_name,sample)
     print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))
 
+def generate_random_sample_matrix(shape):
+    r,c = shape
+    save_name = 'RandomTemplate.npy'
+    tile = np.random.randint(0,3,(r//2,c//2))
+    cfa = np.tile(tile,(2,2))
+    sample = np.zeros((r,c,3))
+    for i in range(3):
+        channel = sample[:,:,i]
+        channel[cfa==i] = 1
+    np.save(save_name,sample)
+    print('Generated random sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))
+
+
 if __name__ == '__main__':
-    generate_bayer_sample_matrix(((PATCH_SIZE,PATCH_SIZE)))
-    generate_ryyb_sample_matrix(((PATCH_SIZE,PATCH_SIZE)))
+    shape = (PATCH_SIZE,PATCH_SIZE)
+    # generate_bayer_sample_matrix(shape)
+    # generate_ryyb_sample_matrix(shape)
+    generate_random_sample_matrix(shape)
+    
 
 SAMPLE_MATRIX = np.array(np.load('BayerTemplate.npy'))
 RYYB_SAMPLE_MATRIX = np.array(np.load('RYYBTemplate.npy'))
+RANDOM_SAMPLE_MATRIX = np.array(np.load('RandomTemplate.npy'))
+
