@@ -96,6 +96,22 @@ def sample_imgs():
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
     print('\r100.0% ')
 
+def splittest():
+    if not os.path.exists(Dataset.CHOPPED_DIR_TEST):
+        os.makedirs(Dataset.CHOPPED_DIR_TEST)
+    if not os.path.exists(Dataset.MOSAIC_DIR_TEST):
+        os.makedirs(Dataset.MOSAIC_DIR_TEST)
+    
+    def move(des,src):
+        TIFs = [x for x in os.listdir(src) if 'TIF' in x]
+        old_paths = [os.path.join(src,x) for x in TIFs]
+        new_paths = [os.path.join(des,x) for x in TIFs]
+        for old_path,new_path in zip(old_paths,new_paths):
+            shutil.move(old_path,new_path)
+         
+    move(Dataset.CHOPPED_DIR_TEST,Dataset.CHOPPED_DIR)
+    move(Dataset.MOSAIC_DIR_TEST,Dataset.MOSAIC_DIR)
+
 def sample_ryyb_imgs():
     if not os.path.exists(Dataset.RYYB_MOSAIC_DIR):
         os.makedirs(Dataset.RYYB_MOSAIC_DIR)
@@ -144,23 +160,42 @@ def sample_random_imgs():
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
     print('\r100.0% ')
     
-
-def splittest():
-    if not os.path.exists(Dataset.CHOPPED_DIR_TEST):
-        os.makedirs(Dataset.CHOPPED_DIR_TEST)
-    if not os.path.exists(Dataset.MOSAIC_DIR_TEST):
-        os.makedirs(Dataset.MOSAIC_DIR_TEST)
-    
-    def move(des,src):
-        TIFs = [x for x in os.listdir(src) if 'TIF' in x]
-        old_paths = [os.path.join(src,x) for x in TIFs]
-        new_paths = [os.path.join(des,x) for x in TIFs]
-        for old_path,new_path in zip(old_paths,new_paths):
-            shutil.move(old_path,new_path)
-         
-    move(Dataset.CHOPPED_DIR_TEST,Dataset.CHOPPED_DIR)
-    move(Dataset.MOSAIC_DIR_TEST,Dataset.MOSAIC_DIR)
-    
+def sample_arbitrary_imgs():
+    if not os.path.exists(Dataset.Arbitrary_MOSAIC_DIR):
+        os.makedirs(Dataset.Arbitrary_MOSAIC_DIR)
+    if not os.path.exists(Dataset.Arbitrary_MOSAIC_DIR_TEST):
+        os.makedirs(Dataset.Arbitrary_MOSAIC_DIR_TEST)
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'tif' in x.lower()]
+    r,c = 
+    for i,pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
+        fpath_mosaic = os.path.join(Dataset.Arbitrary_MOSAIC_DIR,pic)
+        img = cv2.imread(fpath)
+        # im = img*RANDOM_SAMPLE_MATRIX
+        cfa = np.random.randint(0,2,(r,c))
+        sample = np.zeros_like(img)
+        for i in range(3):
+            channel = sample[:,:,i]
+            channel[cfa==i] = 1
+        im = img*sample
+        cv2.imwrite(fpath_mosaic,im)
+        print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
+    print('\r100.0% ')
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR_TEST) if 'tif' in x.lower()]
+    for i,pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR_TEST,pic)
+        fpath_mosaic = os.path.join(Dataset.Arbitrary_MOSAIC_DIR_TEST,pic)
+        img = cv2.imread(fpath)
+        # im = img*RANDOM_SAMPLE_MATRIX
+        cfa = np.random.randint(0,2,(r,c))
+        sample = np.zeros_like(img)
+        for i in range(3):
+            channel = sample[:,:,i]
+            channel[cfa==i] = 1
+        im = img*sample
+        cv2.imwrite(fpath_mosaic,im)
+        print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
+    print('\r100.0% ')
 
 def start():
     # gather_info()

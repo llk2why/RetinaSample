@@ -28,6 +28,7 @@ parser.add_argument("--batch_size", default=8, type=int, help="Batch size to use
 parser.add_argument("--display_freq", default=20, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
+parser.add_argument("--noisy", default=0, type=float, help="Noisy std")
 parser.add_argument("--model_type", default='Random', type=str,
                     choices=['DemosaicSR','RYYB','Random'], help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
@@ -107,6 +108,8 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
                     result_dir = Dataset.RYYB_RESULT
                 elif args.model_type == 'Random':
                     result_dir = Dataset.Random_RESULT
+                if args.noisy > 0:
+                    result_dir = result_dir + ' noisy={:.2f}'.format(args.noisy)
                 if not os.path.exists(result_dir):
                     os.makedirs(result_dir)
                 predictions = (predictions.cpu().numpy()).transpose(0,2,3,1)
@@ -148,11 +151,11 @@ def main():
     train_data = DatasetFromFolder(train_x_dir,train_y_dir,args.model_type,
                                 input_transform=Compose([ToTensor()]),
                                 target_transform=Compose([ToTensor()]),
-                                debug=args.debug)
+                                debug=args.debug,noisy=args.noisy)
     test_data = DatasetFromFolder(test_x_dir,test_y_dir,args.model_type,
                                 input_transform=Compose([ToTensor()]),
                                 target_transform=Compose([ToTensor()]),
-                                debug=args.debug)
+                                debug=args.debug,noisy=args.noisy)
     train_loader = DataLoader(dataset=train_data, 
                             num_workers=args.threads, 
                             batch_size=args.batch_size, 
@@ -169,6 +172,6 @@ def main():
         # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')    
     test_loss = evaluate(0, net, test_loader, criterion,save=True,names=test_data.filenames)
-    torch.save(net.state_dict(), '{}_model_epoch={}.pth'.format(args.model_type,args.epochs))
+    torch.save(net.state_dict(), '{}_model_noisy={:.2f}_epoch={}.pth'.format(args.model_type,args.noisy,args.epochs))
 if __name__ == '__main__':
     main()

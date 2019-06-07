@@ -20,7 +20,7 @@ def load_img(filepath):
 
 
 class DatasetFromFolder(data.Dataset):
-    def __init__(self, train_dir,target_dir,model_type=None, input_transform=None, target_transform=None,debug=False):
+    def __init__(self, train_dir,target_dir,model_type=None,noisy=0.0, input_transform=None, target_transform=None,debug=False):
         super(DatasetFromFolder, self).__init__()
         self.filenames = [x for x in listdir(train_dir) if is_image_file(x)]
         if debug:
@@ -32,20 +32,28 @@ class DatasetFromFolder(data.Dataset):
         self.target_transform = target_transform
 
         self.model_type = model_type
+        self.noisy = noisy
 
     def __getitem__(self, index):
-        input = load_img(self.image_train_filenames[index])
-        target = load_img(self.image_target_filenames[index])
+        input = load_img(self.image_train_filenames[index]).astype(np.float)
+        target = load_img(self.image_target_filenames[index]).astype(np.float)
+        if self.noisy>0.0:
+            self.__add_noisy__(input)
         if self.input_transform:
             input = self.input_transform(input)
         if self.target_transform:
             target = self.target_transform(target)
         if self.model_type == 'RYYB':
-            input = input.float()
+            input = input
             r,g = input[:,:,0],input[:,:,1]
             g[g>0],r[g>0] = r[g>0]+g[g>0],0
 
+    
         return input, target
+
+    def __add_noisy__(self,x):
+        noisy = np.random.normal(0,self.noisy,(x.shape))
+        x = x+noisy
 
     def __len__(self):
         return len(self.image_train_filenames)

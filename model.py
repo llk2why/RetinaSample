@@ -136,3 +136,7 @@ class Random(nn.Module):
         output = self.stage2(output)
         output = self.stage3(output)
         return output
+
+class Arbitrary(nn.Module):
+    def __init__(self,resnet_level=2):
+        super(Arbitrary, self).__init__()
