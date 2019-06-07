@@ -6,6 +6,7 @@ import cv2
 from os import listdir
 from os.path import join
 from PIL import Image
+from config import PATCH_SIZE
 
 def is_image_file(filename):
     return any(filename.endswith(extension) for extension in [".tif", ".TIF"])
@@ -35,6 +36,8 @@ class DatasetFromFolder(data.Dataset):
         self.model_type = model_type
         self.noisy = noisy
 
+        self.num = PATCH_SIZE*PATCH_SIZE*3
+
     def __getitem__(self, index):
         input = load_img(self.image_train_filenames[index])
         target = load_img(self.image_target_filenames[index])
@@ -55,11 +58,11 @@ class DatasetFromFolder(data.Dataset):
     def __add_noisy__(self,x,y):
         # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/y.size)
         avg_energy = torch.pow(y.float(),2)
-        print(type(avg_energy))
-        avg_energy = torch.sum(avg_energy)/y.size()
-        print(type(avg_energy))
+        # print(type(avg_energy))
+        avg_energy = torch.sum(avg_energy)/self.num
+        # print(type(avg_energy))
         avg_energy = torch.sqrt(avg_energy)
-        print(type(avg_energy))
+        # print(type(avg_energy))
         std = avg_energy*self.noisy*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
