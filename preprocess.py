@@ -166,7 +166,7 @@ def sample_arbitrary_imgs():
     if not os.path.exists(Dataset.Arbitrary_MOSAIC_DIR_TEST):
         os.makedirs(Dataset.Arbitrary_MOSAIC_DIR_TEST)
     pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'tif' in x.lower()]
-    r,c = 
+    r,c = PATCH_SIZE,PATCH_SIZE
     for i,pic in enumerate(pics):
         fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
         fpath_mosaic = os.path.join(Dataset.Arbitrary_MOSAIC_DIR,pic)
@@ -203,7 +203,8 @@ def start():
     # splittest()
     # sample_imgs()
     # sample_ryyb_imgs()
-    sample_random_imgs()
+    # sample_random_imgs()
+    sample_arbitrary_imgs()
 
 if __name__ == '__main__':
     start()
