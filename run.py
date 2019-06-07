@@ -29,8 +29,8 @@ parser.add_argument("--display_freq", default=20, type=int, help="Display freque
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
 parser.add_argument("--noisy", default=0, type=float, help="Noisy std")
-parser.add_argument("--model_type", default='Random', type=str,
-                    choices=['DemosaicSR','RYYB','Random'], help="Available models")
+parser.add_argument("--model_type", default='Arbitrary', type=str,
+                    choices=['DemosaicSR','RYYB','Random','Arbitrary'], help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
 
