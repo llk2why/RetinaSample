@@ -37,10 +37,10 @@ class DatasetFromFolder(data.Dataset):
     def __getitem__(self, index):
         input = load_img(self.image_train_filenames[index])
         target = load_img(self.image_target_filenames[index])
-        if self.noisy>0.0:
-            self.__add_noisy__(input)
         if self.input_transform:
             input = self.input_transform(input)
+        if self.noisy>0.0:
+            self.__add_noisy__(input)
         if self.target_transform:
             target = self.target_transform(target)
         if self.model_type == 'RYYB':
@@ -52,8 +52,11 @@ class DatasetFromFolder(data.Dataset):
         return input, target
 
     def __add_noisy__(self,x):
-        noisy = np.random.normal(0,self.noisy,(x.shape))
-        x = x+noisy
+        avg_intensity = torch.sqrt(torch.sum(torch.pow(x,2))/x.size)
+        std = avg_intensity*self.noisy
+        e = torch.zeros_like(x.shape)
+        e._normal(0,std)
+        x = x+e
 
     def __len__(self):
         return len(self.image_train_filenames)
