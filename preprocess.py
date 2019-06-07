@@ -130,7 +130,7 @@ def sample_random_imgs():
         fpath = os.path.join(Dataset.CHOPPED_DIR,pic)
         fpath_mosaic = os.path.join(Dataset.Random_MOSAIC_DIR,pic)
         img = cv2.imread(fpath)
-        im = img*Random_SAMPLE_MATRIX
+        im = img*RANDOM_SAMPLE_MATRIX
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
     print('\r100.0% ')
@@ -139,7 +139,7 @@ def sample_random_imgs():
         fpath = os.path.join(Dataset.CHOPPED_DIR_TEST,pic)
         fpath_mosaic = os.path.join(Dataset.Random_MOSAIC_DIR_TEST,pic)
         img = cv2.imread(fpath)
-        im = img*Random_SAMPLE_MATRIX
+        im = img*RANDOM_SAMPLE_MATRIX
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
     print('\r100.0% ')
