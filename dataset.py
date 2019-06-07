@@ -53,10 +53,10 @@ class DatasetFromFolder(data.Dataset):
         return input, target
 
     def __add_noisy__(self,x,y):
-        avg_energy = torch.sqrt(torch.sum(torch.pow(y,2))/y.size)
-        std = avg_energy*self.noisy
-        e = torch.zeros(x.shape)
-        e._normal(0,std)
+        avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/y.size)
+        std = avg_energy*self.noisy*torch.ones(x.shape)
+        mu = torch.zeros(x.shape)
+        e = torch.normal(mu,std)
         x = x+e
 
     def __len__(self):
