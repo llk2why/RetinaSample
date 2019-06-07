@@ -55,8 +55,11 @@ class DatasetFromFolder(data.Dataset):
     def __add_noisy__(self,x,y):
         # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/y.size)
         avg_energy = torch.pow(y.float(),2)
+        print(type(avg_energy))
         avg_energy = torch.sum(avg_energy)/y.size
+        print(type(avg_energy))
         avg_energy = torch.sqrt(avg_energy)
+        print(type(avg_energy))
         std = avg_energy*self.noisy*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
