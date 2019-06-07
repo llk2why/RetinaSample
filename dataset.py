@@ -40,10 +40,10 @@ class DatasetFromFolder(data.Dataset):
         target = load_img(self.image_target_filenames[index])
         if self.input_transform:
             input = self.input_transform(input)
-        if self.noisy>0.0:
-            self.__add_noisy__(input,target)
         if self.target_transform:
             target = self.target_transform(target)
+        if self.noisy>0.0:
+            self.__add_noisy__(input,target)
         if self.model_type == 'RYYB':
             input = input
             r,g = input[:,:,0],input[:,:,1]
