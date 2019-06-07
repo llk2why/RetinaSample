@@ -174,9 +174,9 @@ def sample_arbitrary_imgs():
         # im = img*RANDOM_SAMPLE_MATRIX
         cfa = np.random.randint(0,2,(r,c))
         sample = np.zeros_like(img)
-        for i in range(3):
-            channel = sample[:,:,i]
-            channel[cfa==i] = 1
+        for j in range(3):
+            channel = sample[:,:,j]
+            channel[cfa==j] = 1
         im = img*sample
         cv2.imwrite(fpath_mosaic,im)
         print('\r{:.2f}%'.format(100.0*i/len(pics)),end='')
