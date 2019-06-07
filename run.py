@@ -53,8 +53,8 @@ def train(epoch, model, train_loader, optimizer, criterion):
         # exit()
 
         optimizer.zero_grad()
-        predictions = model(x.float())
-        loss = criterion(predictions, y.float())
+        predictions = model(x)
+        loss = criterion(predictions, y)
         loss.backward()
         optimizer.step()
 
