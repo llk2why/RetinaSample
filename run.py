@@ -108,6 +108,8 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
                     result_dir = Dataset.RYYB_RESULT
                 elif args.model_type == 'Random':
                     result_dir = Dataset.Random_RESULT
+                elif args.model_type == 'Arbitrary':
+                    result_dir = Dataset.Arbitrary_RESULT
                 if args.noisy > 0:
                     result_dir = result_dir + ' noisy={:.2f}'.format(args.noisy)
                 if not os.path.exists(result_dir):
@@ -143,6 +145,9 @@ def main():
     elif args.model_type == 'Random':
         train_x_dir = Dataset.Random_MOSAIC_DIR
         test_x_dir = Dataset.Random_MOSAIC_DIR_TEST
+    elif args.model_type == 'Arbitrary':
+        train_x_dir = Dataset.Arbitrary_MOSAIC_DIR
+        test_x_dir = Dataset.Arbitrary_MOSAIC_DIR_TEST
 
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST
