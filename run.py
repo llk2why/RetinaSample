@@ -61,7 +61,7 @@ def train(epoch, model, train_loader, optimizer, criterion):
         loss_list.append(loss.item())
 
         mse = torch.mean(torch.pow(y-predictions,2),dim=[1,2,3])
-        tensor = torch.tensor(1).float().to(device)
+        tensor = torch.tensor(1).double().to(device)
         psnr = 20*torch.log10(tensor)-10*torch.log10(mse)
         train_loss.extend(loss_list)
         if i % args.display_freq == 0:

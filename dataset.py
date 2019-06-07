@@ -35,8 +35,8 @@ class DatasetFromFolder(data.Dataset):
         self.noisy = noisy
 
     def __getitem__(self, index):
-        input = load_img(self.image_train_filenames[index]).astype(np.float)
-        target = load_img(self.image_target_filenames[index]).astype(np.float)
+        input = load_img(self.image_train_filenames[index])
+        target = load_img(self.image_target_filenames[index])
         if self.noisy>0.0:
             self.__add_noisy__(input)
         if self.input_transform:
