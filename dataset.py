@@ -41,7 +41,7 @@ class DatasetFromFolder(data.Dataset):
         if self.input_transform:
             input = self.input_transform(input)
         if self.noisy>0.0:
-            self.__add_noisy__(input)
+            self.__add_noisy__(input,target)
         if self.target_transform:
             target = self.target_transform(target)
         if self.model_type == 'RYYB':
@@ -52,10 +52,10 @@ class DatasetFromFolder(data.Dataset):
     
         return input, target
 
-    def __add_noisy__(self,x):
-        avg_intensity = torch.sqrt(torch.sum(torch.pow(x,2))/x.size)
-        std = avg_intensity*self.noisy
-        e = torch.zeros_like(x.shape)
+    def __add_noisy__(self,x,y):
+        avg_energy = torch.sqrt(torch.sum(torch.pow(y,2))/y.size)
+        std = avg_energy*self.noisy
+        e = torch.zeros(x.shape)
         e._normal(0,std)
         x = x+e
 
