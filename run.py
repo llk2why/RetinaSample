@@ -177,6 +177,6 @@ def main():
         # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')    
     test_loss = evaluate(0, net, test_loader, criterion,save=True,names=test_data.filenames)
-    torch.save(net.state_dict(), '{}_model_noisy={:.2f}_epoch={}.pth'.format(args.model_type,args.noisy,args.epochs))
+    torch.save(net.state_dict(), 'model/{}_model_noisy={:.2f}_epoch={}.pth'.format(args.model_type,args.noisy,args.epochs))
 if __name__ == '__main__':
     main()
