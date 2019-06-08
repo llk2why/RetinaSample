@@ -41,32 +41,38 @@ class DatasetFromFolder(data.Dataset):
     def __getitem__(self, index):
         input = load_img(self.image_train_filenames[index])
         target = load_img(self.image_target_filenames[index])
-        if self.input_transform:
-            input = self.input_transform(input)
-        if self.target_transform:
-            target = self.target_transform(target)
-        if self.noisy>0.0:
-            self.__add_noisy__(input,target)
         if self.model_type == 'RYYB':
             input = input
             r,g = input[:,:,0],input[:,:,1]
             g[g>0],r[g>0] = r[g>0]+g[g>0],0
 
+        # ATTENTION, ToTensor will change dimension order and value range!
+        if self.input_transform:
+            input = self.input_transform(input)
+        if self.target_transform:
+            target = self.target_transform(target)
+
+        if self.noisy>0.0:
+            input = self.__add_noisy__(input,target)
+        # print('input',input[0,:6,:6])
+        # exit()
     
         return input, target
 
     def __add_noisy__(self,x,y):
-        # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/y.size)
-        avg_energy = torch.pow(y.float(),2)
-        # print(type(avg_energy))
-        avg_energy = torch.sum(avg_energy)/self.num
-        # print(type(avg_energy))
-        avg_energy = torch.sqrt(avg_energy)
-        # print(type(avg_energy))
+        print('x1',x[0,:6,:6])
+        avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
+        # avg_energy = torch.pow(y.float(),2)
+        # avg_energy = torch.sum(avg_energy)/self.num
+        # avg_energy = torch.sqrt(avg_energy)
         std = avg_energy*self.noisy*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
-        x = x+e
+        x = x+e*(x>0).float()
+        # print('e',e[0,:6,:6])
+        # print('noisy',(e*(x>0).float())[0,:6,:6])
+        # print('x2',x[0,:6,:6])
+        return x
 
     def __len__(self):
         return len(self.image_train_filenames)
