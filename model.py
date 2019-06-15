@@ -99,12 +99,13 @@ class RYYB(nn.Module):
             ('stage3_3_conv3x3',nn.Conv2d(in_channels=256, out_channels=3,
                             kernel_size=3, stride=1, padding=1, bias=True))
         ]))
-        
+        self.shortcut = nn.Sequential()
 
     def forward(self, input):
         output = self.stage1(input)
         output = self.stage2(output)
         output = self.stage3(output)
+        output = output + self.shortcut(input)
         return output
 
 class Random(nn.Module):

@@ -60,7 +60,7 @@ class DatasetFromFolder(data.Dataset):
         return input, target
 
     def __add_noisy__(self,x,y):
-        print('x1',x[0,:6,:6])
+        # print('x1',x[0,:6,:6])
         avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
         # avg_energy = torch.pow(y.float(),2)
         # avg_energy = torch.sum(avg_energy)/self.num

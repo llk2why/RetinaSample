@@ -6,7 +6,7 @@ from config import *
 from utilities import LOG_INFO
 
 LOG_INFO('====> Begin reading yaml')
-PATCH_SIZE = {}
+PATCH_INFO = {}
 
 names = [x.split('.TIF')[0] for x in os.listdir(Dataset.RAW_DIR) if 'TIF' in x]
 def get_psnr(x,y):
@@ -69,17 +69,26 @@ def compare_psnr(img_dir,suffix,tag):
         f.write('avg:{:.4f}\n'.format(np.mean(psnrs)))
 
 def main():
-    # with open('./yamls/chop.yaml') as f:
-    #     PATCH_INFO = yaml.load(f)
+    global PATCH_INFO
+    with open('./yamls/chop.yaml') as f:
+        PATCH_INFO = yaml.load(f)
     # combine(Dataset.RESULT,'RGGB')
-    # combine(Dataset.RYYB_RESULT,'RYYB')
+    combine(Dataset.RYYB_RESULT,'RYYB')
     # combine(Dataset.Random_RESULT,'Random')
     # combine(Dataset.Arbitrary_RESULT,'Arbitrary')
 
-    compare_psnr(r'joint(RGGB)','tiff','RGGB')
+    # combine(Dataset.RESULT+' noisy=0.10','RGGB_noisy')
+    # combine(Dataset.RYYB_RESULT+' noisy=0.10','RYYB_noisy')
+    # combine(Dataset.Random_RESULT+' noisy=0.10','Random_noisy')
+
+    # compare_psnr(r'joint(RGGB)','tiff','RGGB')
     compare_psnr(r'joint(RYYB)','tiff','RYYB')
-    compare_psnr(r'joint(Random)','tiff','Random')
-    compare_psnr(r'joint(Arbitrary)','tiff','Arbitrary')
+    # compare_psnr(r'joint(Random)','tiff','Random')
+    # compare_psnr(r'joint(Arbitrary)','tiff','Arbitrary')
+
+    # compare_psnr(r'joint(RGGB_noisy)','tiff','RGGB_noisy')
+    # compare_psnr(r'joint(RYYB_noisy)','tiff','RYYB_noisy')
+    # compare_psnr(r'joint(Random_noisy)','tiff','Random_noisy')
 
     
 
