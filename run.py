@@ -29,8 +29,8 @@ parser.add_argument("--display_freq", default=20, type=int, help="Display freque
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
 parser.add_argument("--noisy", default=0, type=float, help="Noisy std")
-parser.add_argument("--model_type", default='Arbitrary', type=str,
-                    choices=['DemosaicSR','RYYB','Random','Arbitrary'], help="Available models")
+parser.add_argument("--model_type", default='RB_G', type=str,
+                    choices=['DemosaicSR','RYYB','Random','Arbitrary','RB_G'], help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
 
@@ -110,6 +110,8 @@ def evaluate(epoch,model,loader,criterion,save=False,names=None):
                     result_dir = Dataset.Random_RESULT
                 elif args.model_type == 'Arbitrary':
                     result_dir = Dataset.Arbitrary_RESULT
+                elif args.model_type == 'RB_G':
+                    result_dir = Dataset.RB_G_RESULT
                 if args.noisy > 0:
                     result_dir = result_dir + ' noisy={:.2f}'.format(args.noisy)
                 if not os.path.exists(result_dir):
@@ -148,6 +150,9 @@ def main():
     elif args.model_type == 'Arbitrary':
         train_x_dir = Dataset.Arbitrary_MOSAIC_DIR
         test_x_dir = Dataset.Arbitrary_MOSAIC_DIR_TEST
+    elif args.model_type == 'RB_G':
+        train_x_dir = Dataset.RB_G_MOSAIC_DIR
+        test_x_dir = Dataset.RB_G_MOSAIC_DIR_TEST
 
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST

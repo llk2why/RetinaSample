@@ -73,22 +73,27 @@ def main():
     with open('./yamls/chop.yaml') as f:
         PATCH_INFO = yaml.load(f)
     # combine(Dataset.RESULT,'RGGB')
-    combine(Dataset.RYYB_RESULT,'RYYB')
+    # combine(Dataset.RYYB_RESULT,'RYYB')
     # combine(Dataset.Random_RESULT,'Random')
     # combine(Dataset.Arbitrary_RESULT,'Arbitrary')
+    combine(Dataset.RB_G_RESULT,'RB_G')
 
     # combine(Dataset.RESULT+' noisy=0.10','RGGB_noisy')
     # combine(Dataset.RYYB_RESULT+' noisy=0.10','RYYB_noisy')
     # combine(Dataset.Random_RESULT+' noisy=0.10','Random_noisy')
+    combine(Dataset.RB_G_RESULT+' noisy=0.10','RB_G_noisy')
 
     # compare_psnr(r'joint(RGGB)','tiff','RGGB')
-    compare_psnr(r'joint(RYYB)','tiff','RYYB')
+    # compare_psnr(r'joint(RYYB)','tiff','RYYB')
     # compare_psnr(r'joint(Random)','tiff','Random')
     # compare_psnr(r'joint(Arbitrary)','tiff','Arbitrary')
+    compare_psnr(r'joint(RB_G)','tiff','RB_G')
 
     # compare_psnr(r'joint(RGGB_noisy)','tiff','RGGB_noisy')
     # compare_psnr(r'joint(RYYB_noisy)','tiff','RYYB_noisy')
     # compare_psnr(r'joint(Random_noisy)','tiff','Random_noisy')
+    # compare_psnr(r'joint(Random_noisy)','tiff','Random_noisy')
+    compare_psnr(r'joint(RB_G_noisy)','tiff','RB_G_noisy')
 
     
 

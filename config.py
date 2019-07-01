@@ -33,6 +33,11 @@ class Dataset:
     Arbitrary_MOSAIC_DIR_TEST = os.path.join(root,r'Sandwich 0612 fullsize Arbitrary Mosaic TEST')
     Arbitrary_RESULT = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Reconstruct Arbitrary')
 
+    ##[INPUT] train RB_G input dir & test RB_G input dir
+    RB_G_MOSAIC_DIR = os.path.join(root,r'Sandwich 0612 fullsize RB_G Mosaic')
+    RB_G_MOSAIC_DIR_TEST = os.path.join(root,r'Sandwich 0612 fullsize RB_G Mosaic TEST')
+    RB_G_RESULT = os.path.join(root,r'Sandwich 0612 fullsize Mosaic Reconstruct RB_G')
+
 """     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
     CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'
     # MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
@@ -69,6 +74,15 @@ def generate_ryyb_sample_matrix(shape):
     np.save(save_name,sample)
     print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))
 
+# RB_G sample matrix
+def generate_rb_g_sample_matrix(shape):
+    r,c = shape
+    save_name = 'RB_GTemplate.npy'
+    tile = np.array([[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]]])
+    sample = np.tile(tile,(r//2,c//2,1))
+    np.save(save_name,sample)
+    print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample,save_name))
+
 def generate_random_sample_matrix(shape):
     r,c = shape
     save_name = 'RandomTemplate.npy'
@@ -100,9 +114,11 @@ if __name__ == '__main__':
     # generate_bayer_sample_matrix(shape)
     # generate_ryyb_sample_matrix(shape)
     # generate_random_sample_matrix(shape)
+    generate_rb_g_sample_matrix(shape)
     
 
 SAMPLE_MATRIX = np.array(np.load('BayerTemplate.npy'))
 RYYB_SAMPLE_MATRIX = np.array(np.load('RYYBTemplate.npy'))
 RANDOM_SAMPLE_MATRIX = np.array(np.load('RandomTemplate.npy'))
+RB_G_SAMPLE_MATRIX = np.array(np.load('RB_GTemplate.npy'))
 
