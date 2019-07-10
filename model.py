@@ -243,3 +243,36 @@ class RB_G_DENOISE(nn.Module):
         green = self.denoise(input[:, 1:2, :, :]) + self.shortcut(input[:, 1:2, :, :])
         output = torch.cat([RnB[:, 0:1, :, :], green, RnB[:, 1:2, :, :]], dim=1)
         return output
+
+
+class JointPixel_RGBG(nn.Module):
+    def __init__(self, resnet_level=2):
+        super(JointPixel_RGBG, self).__init__()
+
+        self.stage1 = nn.Sequential(OrderedDict([
+            ('stage1_1_conv4x4 ', nn.Conv2d(in_channels=3, out_channels=256,
+                                            kernel_size=4, stride=2, padding=1, bias=True)),
+            ('stage1_2_SP_conv ', nn.PixelShuffle(2)),
+            ('stage1_2_conv4x4', nn.Conv2d(in_channels=64, out_channels=256,
+                                           kernel_size=3, stride=1, padding=1, bias=True)),
+            ('stage1_2_PReLU', nn.PReLU())
+        ]))
+        stage2 = [ResidualBlock() for i in range(resnet_level)]
+        self.stage2 = nn.Sequential(*stage2)
+        self.stage3 = nn.Sequential(OrderedDict([
+            # ('stage3_1_SP_conv ',nn.PixelShuffle(2)),
+            ('stage3_2_conv3x3 ', nn.Conv2d(in_channels=256, out_channels=256,
+                                            kernel_size=3, stride=1, padding=1, bias=True)),
+            ('stage3_2_PReLU', nn.PReLU()),
+            ('stage3_3_conv3x3', nn.Conv2d(in_channels=256, out_channels=3,
+                                           kernel_size=3, stride=1, padding=1, bias=True))
+        ]))
+        self.shortcut = nn.Sequential()
+
+    def forward(self, input):
+        input[:, :, ::2] = (input[:, :, ::2] + input[:, :, 1::2]) / 2
+        input[:, :, 1::2] = input[:, :, ::2]
+        output = self.stage1(input)
+        output = self.stage2(output)
+        output = self.stage3(output) + self.shortcut(input)
+        return output

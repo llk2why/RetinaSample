@@ -29,7 +29,7 @@ parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for 
 parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
 parser.add_argument("--noise", default=0, type=float, help="noise std")
 parser.add_argument("--model_type", default='RB_G_DENOISE', type=str,
-                    choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE'],
+                    choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE', 'JointPixel_RGBG'],
                     help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
@@ -114,6 +114,10 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                     result_dir = Dataset.Arbitrary_RESULT
                 elif args.model_type == 'RB_G':
                     result_dir = Dataset.RB_G_RESULT
+                elif args.model_type == 'RB_G_DENOISE':
+                    result_dir = Dataset.RB_G_DENOISE_RESULT
+                elif args.model_type == 'JointPixel_RGBG':
+                    result_dir = Dataset.JointPixel_RGBG_RESULT
                 if args.noise > 0:
                     result_dir = result_dir + ' noise={:.2f}'.format(args.noise)
                 if not os.path.exists(result_dir):
@@ -159,7 +163,9 @@ def main():
     elif args.model_type == 'RB_G_DENOISE':
         train_x_dir = Dataset.RB_G_DENOISE_MOSAIC_DIR
         test_x_dir = Dataset.RB_G_DENOISE_MOSAIC_DIR_TEST
-
+    elif args.model_type == 'JointPixel_RGBG':
+        train_x_dir = Dataset.JointPixel_RGBG_MOSAIC_DIR
+        test_x_dir = Dataset.JointPixel_RGBG_MOSAIC_DIR_TEST
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST
 
@@ -190,6 +196,8 @@ def main():
     test_loss = evaluate(0, net, test_loader, criterion, save=True, names=test_data.filenames)
     torch.save(net.state_dict(),
                'model/{}_model_noise={:.2f}_epoch={}.pth'.format(args.model_type, args.noise, args.epochs))
+    with open('log','a') as f:
+        f.write('Finish {} with noise {}\n'.format(args.model_type,args.noise))
 
 
 if __name__ == '__main__':
