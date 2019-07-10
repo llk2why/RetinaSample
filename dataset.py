@@ -22,7 +22,7 @@ def load_img(filepath):
 
 
 class DatasetFromFolder(data.Dataset):
-    def __init__(self, train_dir,target_dir,model_type=None,noisy=0.0, input_transform=None, target_transform=None,debug=False):
+    def __init__(self, train_dir,target_dir,model_type=None,noise=0.0, input_transform=None, target_transform=None,debug=False):
         super(DatasetFromFolder, self).__init__()
         self.filenames = [x for x in listdir(train_dir) if is_image_file(x)]
         if debug:
@@ -34,7 +34,7 @@ class DatasetFromFolder(data.Dataset):
         self.target_transform = target_transform
 
         self.model_type = model_type
-        self.noisy = noisy
+        self.noise = noise
 
         self.num = PATCH_SIZE*PATCH_SIZE*3
 
@@ -52,25 +52,25 @@ class DatasetFromFolder(data.Dataset):
         if self.target_transform:
             target = self.target_transform(target)
 
-        if self.noisy>0.0:
-            input = self.__add_noisy__(input,target)
+        if self.noise>0.0:
+            input = self.__add_noise__(input,target)
         # print('input',input[0,:6,:6])
         # exit()
     
         return input, target
 
-    def __add_noisy__(self,x,y):
+    def __add_noise__(self,x,y):
         # print('x1',x[0,:6,:6])
         avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
         # avg_energy = torch.pow(y.float(),2)
         # avg_energy = torch.sum(avg_energy)/self.num
         # avg_energy = torch.sqrt(avg_energy)
-        std = avg_energy*self.noisy*torch.ones(x.shape)
+        std = avg_energy*self.noise*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
         x = x+e*(x>0).float()
         # print('e',e[0,:6,:6])
-        # print('noisy',(e*(x>0).float())[0,:6,:6])
+        # print('noise',(e*(x>0).float())[0,:6,:6])
         # print('x2',x[0,:6,:6])
         return x
 
