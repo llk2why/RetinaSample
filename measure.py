@@ -56,7 +56,7 @@ def compare_psnr(img_dir,suffix,tag):
                 std_name = name_pair[os.path.splitext(file)[0].split('_')[0]]
             else:
                 std_name = file.split('.')[0]
-            std_fpath = os.path.join('C:\data\dataset\Sandwich 0612 fullsize',std_name+'.TIF')
+            std_fpath = os.path.join(Dataset.RAW_DIR,std_name+'.TIF')
             # print(fpath)
             # print(std_fpath)
             im_y = cv2.imread(fpath)
@@ -76,24 +76,28 @@ def main():
     # combine(Dataset.RYYB_RESULT,'RYYB')
     # combine(Dataset.Random_RESULT,'Random')
     # combine(Dataset.Arbitrary_RESULT,'Arbitrary')
-    combine(Dataset.RB_G_RESULT,'RB_G')
+    # combine(Dataset.RB_G_RESULT,'RB_G')
+    # combine(Dataset.RB_G_DENOISE_RESULT,'RB_G_DENOISE')
+    # combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_RGBG')
 
     # combine(Dataset.RESULT+' noise=0.10','RGGB_noise')
     # combine(Dataset.RYYB_RESULT+' noise=0.10','RYYB_noise')
     # combine(Dataset.Random_RESULT+' noise=0.10','Random_noise')
-    combine(Dataset.RB_G_RESULT+' noise=0.10','RB_G_noise')
+    # combine(Dataset.RB_G_RESULT+' noise=0.10','RB_G_noise')
 
-    # compare_psnr(r'joint(RGGB)','tiff','RGGB')
-    # compare_psnr(r'joint(RYYB)','tiff','RYYB')
-    # compare_psnr(r'joint(Random)','tiff','Random')
-    # compare_psnr(r'joint(Arbitrary)','tiff','Arbitrary')
+    compare_psnr(r'joint(RGGB)','tiff','RGGB')
+    compare_psnr(r'joint(RYYB)','tiff','RYYB')
+    compare_psnr(r'joint(Random)','tiff','Random')
+    compare_psnr(r'joint(Arbitrary)','tiff','Arbitrary')
     compare_psnr(r'joint(RB_G)','tiff','RB_G')
+    compare_psnr(r'joint(RB_G_DENOISE)','tiff','RB_G_DENOISE')
+    compare_psnr(r'joint(JointPixel_RGBG)','tiff','JointPixel_RGBG')
 
     # compare_psnr(r'joint(RGGB_noise)','tiff','RGGB_noise')
     # compare_psnr(r'joint(RYYB_noise)','tiff','RYYB_noise')
     # compare_psnr(r'joint(Random_noise)','tiff','Random_noise')
     # compare_psnr(r'joint(Random_noise)','tiff','Random_noise')
-    compare_psnr(r'joint(RB_G_noise)','tiff','RB_G_noise')
+    # compare_psnr(r'joint(RB_G_noise)','tiff','RB_G_noise')
 
     
 

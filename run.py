@@ -103,7 +103,7 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                 loss_list.clear()
 
             if save:
-                # print('saving..')
+                print('Saving results..')
                 if args.model_type == 'DemosaicSR':
                     result_dir = Dataset.RESULT
                 elif args.model_type == 'RYYB':
