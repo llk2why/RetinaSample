@@ -1,5 +1,6 @@
 import torch.utils.data as data
 import torch
+import yaml
 import numpy as np
 import cv2
 
@@ -30,6 +31,12 @@ class DatasetFromFolder(data.Dataset):
         self.image_train_filenames = [join(train_dir, x) for x in self.filenames]
         self.image_target_filenames = [join(target_dir, x) for x in self.filenames]
 
+        prefixes = ['_'.join(x.split('_')[:-1]) for x in self.filenames]
+
+        with open('yamls/energy.yaml') as f:
+            energy_dict = yaml.load(f)
+        self.avg_energy = [energy_dict[x] for x in prefixes]
+
         self.input_transform = input_transform
         self.target_transform = target_transform
 
@@ -53,25 +60,18 @@ class DatasetFromFolder(data.Dataset):
             target = self.target_transform(target)
 
         if self.noise>0.0:
-            input = self.__add_noise__(input,target)
+            input = self.__add_noise__(input,target,self.avg_energy[index])
         # print('input',input[0,:6,:6])
         # exit()
     
         return input, target
 
-    def __add_noise__(self,x,y):
-        # print('x1',x[0,:6,:6])
-        avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
-        # avg_energy = torch.pow(y.float(),2)
-        # avg_energy = torch.sum(avg_energy)/self.num
-        # avg_energy = torch.sqrt(avg_energy)
+    def __add_noise__(self,x,y,avg_energy):
+        # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
         std = avg_energy*self.noise*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
         x = x+e*(x>0).float()
-        # print('e',e[0,:6,:6])
-        # print('noise',(e*(x>0).float())[0,:6,:6])
-        # print('x2',x[0,:6,:6])
         return x
 
     def __len__(self):

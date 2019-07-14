@@ -47,12 +47,6 @@ def train(epoch, model, train_loader, optimizer, criterion):
     for x, y in train_loader:
         x, y = x.to(device), y.to(device)
 
-        # p = x[0].clone().cpu().numpy().transpose(1,2,0)
-        # q = y[0].clone().cpu().numpy().transpose(1,2,0)
-        # cv2.imwrite('x.png',(p*255).astype(np.uint8))
-        # cv2.imwrite('y.png',(q*255).astype(np.uint8))
-        # exit()
-
         optimizer.zero_grad()
         predictions = model(x.float())
         loss = criterion(predictions, y.float())

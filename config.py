@@ -149,8 +149,8 @@ if __name__ == '__main__':
     # generate_rb_g_sample_matrix(shape)
     # generate_jointpixel_rgbg_sample_matrix(shape)
 
-SAMPLE_MATRIX = np.array(np.load('BayerTemplate.npy'))
-RYYB_SAMPLE_MATRIX = np.array(np.load('RYYBTemplate.npy'))
-RANDOM_SAMPLE_MATRIX = np.array(np.load('RandomTemplate.npy'))
-RB_G_SAMPLE_MATRIX = np.array(np.load('RB_GTemplate.npy'))
-JOINTPIXEL_RGBG_MATRIX = np.array(np.load('JointPixel_RGBGTemplate.npy'))
+SAMPLE_MATRIX = np.array(np.load('Template/BayerTemplate.npy'))
+RYYB_SAMPLE_MATRIX = np.array(np.load('Template/RYYBTemplate.npy'))
+RANDOM_SAMPLE_MATRIX = np.array(np.load('Template/RandomTemplate.npy'))
+RB_G_SAMPLE_MATRIX = np.array(np.load('Template/RB_GTemplate.npy'))
+JOINTPIXEL_RGBG_MATRIX = np.array(np.load('Template/JointPixel_RGBGTemplate.npy'))
