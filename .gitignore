@@ -7,7 +7,7 @@ __pycache__
 *.pth
 tmp.py
 *.txt
-joint*
+joint
 *.jpg
 *.png
 model
