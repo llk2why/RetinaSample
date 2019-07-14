@@ -32,7 +32,7 @@ def joint_patch(patch_dir,name,tag):
     joint = joint/cnt
     joint[joint>255]=255
     joint[joint<0]=0
-    joint_dir = 'joint({})'.format(tag)
+    joint_dir = 'joint/joint({})'.format(tag)
     if not os.path.exists(joint_dir):
         os.makedirs(joint_dir)
     cv2.imwrite('{}/{}.tiff'.format(joint_dir,name),joint.astype(np.uint8))
@@ -72,18 +72,21 @@ def main():
     global PATCH_INFO
     with open('./yamls/chop.yaml') as f:
         PATCH_INFO = yaml.load(f)
-    # combine(Dataset.RESULT,'RGGB')
-    # combine(Dataset.RYYB_RESULT,'RYYB')
-    # combine(Dataset.Random_RESULT,'Random')
-    # combine(Dataset.Arbitrary_RESULT,'Arbitrary')
-    # combine(Dataset.RB_G_RESULT,'RB_G')
-    # combine(Dataset.RB_G_DENOISE_RESULT,'RB_G_DENOISE')
-    # combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_RGBG')
+    combine(Dataset.RESULT,'RGGB')
+    combine(Dataset.RYYB_RESULT,'RYYB')
+    combine(Dataset.Random_RESULT,'Random')
+    combine(Dataset.Arbitrary_RESULT,'Arbitrary')
+    combine(Dataset.RB_G_RESULT,'RB_G')
+    combine(Dataset.RB_G_DENOISE_RESULT,'RB_G_DENOISE')
+    combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_RGBG')
 
-    # combine(Dataset.RESULT+' noise=0.10','RGGB_noise')
-    # combine(Dataset.RYYB_RESULT+' noise=0.10','RYYB_noise')
-    # combine(Dataset.Random_RESULT+' noise=0.10','Random_noise')
-    # combine(Dataset.RB_G_RESULT+' noise=0.10','RB_G_noise')
+    for val in ['0.05','0.10','0.20','0.50']:
+        combine(Dataset.RESULT+' noise={}'.format(val),'RGGB_noise={}'.format(val))
+        combine(Dataset.RYYB_RESULT+' noise={}'.format(val),'RYYB_noise={}'.format(val))
+        combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
+        combine(Dataset.RB_G_RESULT+' noise={}'.format(val),'RB_G_noise={}'.format(val))
+        combine(Dataset.RB_G_DENOISE_RESULT+' noise={}'.format(val),'RB_G_DENOISE_noise={}'.format(val))
+        combine(Dataset.JointPixel_RGBG_RESULT+' noise={}'.format(val),'JointPixel_RGBG_noise={}'.format(val))
 
     compare_psnr(r'joint(RGGB)','tiff','RGGB')
     compare_psnr(r'joint(RYYB)','tiff','RYYB')
@@ -93,11 +96,13 @@ def main():
     compare_psnr(r'joint(RB_G_DENOISE)','tiff','RB_G_DENOISE')
     compare_psnr(r'joint(JointPixel_RGBG)','tiff','JointPixel_RGBG')
 
-    # compare_psnr(r'joint(RGGB_noise)','tiff','RGGB_noise')
-    # compare_psnr(r'joint(RYYB_noise)','tiff','RYYB_noise')
-    # compare_psnr(r'joint(Random_noise)','tiff','Random_noise')
-    # compare_psnr(r'joint(Random_noise)','tiff','Random_noise')
-    # compare_psnr(r'joint(RB_G_noise)','tiff','RB_G_noise')
+    for val in ['0.05','0.10','0.20','0.50']:
+        compare_psnr(r'joint(RGGB_noise={})'.format(val),'tiff','RGGB_noise={}'.format(val))
+        compare_psnr(r'joint(RYYB_noise={})'.format(val),'tiff','RYYB_noise={}'.format(val))
+        compare_psnr(r'joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
+        compare_psnr(r'joint(RB_G_noise={})'.format(val),'tiff','RB_G_noise={}'.format(val))
+        compare_psnr(r'joint(RB_G_DENOISE_noise={})'.format(val),'tiff','RB_G_DENOISE_noise={}'.format(val))
+        compare_psnr(r'joint(JointPixel_RGBG_noise={})'.format(val),'tiff','JointPixel_noise={}'.format(val))
 
     
 

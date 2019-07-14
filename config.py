@@ -147,7 +147,7 @@ if __name__ == '__main__':
     # generate_ryyb_sample_matrix(shape)
     # generate_random_sample_matrix(shape)
     # generate_rb_g_sample_matrix(shape)
-    generate_jointpixel_rgbg_sample_matrix(shape)
+    # generate_jointpixel_rgbg_sample_matrix(shape)
 
 SAMPLE_MATRIX = np.array(np.load('BayerTemplate.npy'))
 RYYB_SAMPLE_MATRIX = np.array(np.load('RYYBTemplate.npy'))
