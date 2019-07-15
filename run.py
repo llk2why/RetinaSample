@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import torch.nn as nn
 import torch.optim as optim
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import model
 
 import torchvision.transforms as transforms
@@ -97,7 +97,7 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                 loss_list.clear()
 
             if save:
-                print('Saving results..')
+                # print('Saving results..')
                 if args.model_type == 'DemosaicSR':
                     result_dir = Dataset.RESULT
                 elif args.model_type == 'RYYB':
@@ -188,6 +188,8 @@ def main():
         # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')
     test_loss = evaluate(0, net, test_loader, criterion, save=True, names=test_data.filenames)
+    if not os.path.exists('model'):
+        os.makedirs('model')
     torch.save(net.state_dict(),
                'model/{}_model_noise={:.2f}_epoch={}.pth'.format(args.model_type, args.noise, args.epochs))
     with open('log','a') as f:

@@ -34,7 +34,8 @@ class DatasetFromFolder(data.Dataset):
         prefixes = ['_'.join(x.split('_')[:-1]) for x in self.filenames]
 
         with open('yamls/energy.yaml') as f:
-            energy_dict = yaml.load(f)
+            energy_dict = yaml.load(f,Loader=yaml.FullLoader)
+        energy_dict = {k:v/255 for k,v in energy_dict.items()}
         self.avg_energy = [energy_dict[x] for x in prefixes]
 
         self.input_transform = input_transform
