@@ -61,18 +61,42 @@ class DatasetFromFolder(data.Dataset):
             target = self.target_transform(target)
 
         if self.noise>0.0:
-            input = self.__add_noise__(input,target,self.avg_energy[index])
+            # input = self.__add_noise__(input,target,self.avg_energy[index])
+            input = self.__add_noise2__(input,target,self.avg_energy[index])
         # print('input',input[0,:6,:6])
         # exit()
     
         return input, target
+
 
     def __add_noise__(self,x,y,avg_energy):
         # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
         std = avg_energy*self.noise*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
+        if self.model_type in ['JointPixel_RGBG']:
+            e[:,1::2] = e[:,::2]/2
+            e[:,::2] = e[:,::2]/2
         x = x+e*(x>0).float()
+        x[x>1]=1.0
+        x[x<0]=0.0
+        return x
+
+    # TODO:
+    # positive noise mean value
+    # pay attention to value mapping, e.g. std
+    # joint pixel with special half map noise
+    def __add_noise2__(self,x,y,avg_energy):
+        # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
+        std = avg_energy*self.noise*torch.ones(x.shape)
+        mu = torch.zeros(x.shape)+10/255
+        e = torch.normal(mu,std)
+        if self.model_type in ['JointPixel_RGBG']:
+            e[:,1::2] = e[:,::2]/2
+            e[:,::2] = e[:,::2]/2
+        x = x+e*(x>0).float()
+        x[x>1]=1.0
+        x[x<0]=0.0
         return x
 
     def __len__(self):

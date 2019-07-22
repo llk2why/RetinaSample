@@ -2,10 +2,11 @@ import os
 import cv2
 import yaml
 import numpy as np
+import matplotlib.pyplot as plt
 from config import *
 from utilities import LOG_INFO
+from collections import defaultdict
 
-LOG_INFO('====> Begin reading yaml')
 PATCH_INFO = {}
 
 names = [x.split('.TIF')[0] for x in os.listdir(Dataset.RAW_DIR) if 'TIF' in x]
@@ -69,21 +70,21 @@ def compare_psnr(img_dir,suffix,tag):
         print('100%   ')
         f.write('avg:{:.4f}\n'.format(np.mean(psnrs)))
 
-def extract():
-    txts = [x for x in os.listdir('result') if 'psnr' in x]
-    with open('result/results.txt','w') as f:
+def extract(dir_path):
+    txts = [x for x in os.listdir(dir_path) if 'psnr' in x]
+    with open(os.path.join(dir_path,'results.txt'),'w') as f:
         for txt in txts:
-            fpath = os.path.join('result',txt)
+            fpath = os.path.join(dir_path,txt)
             with open(fpath,'r') as fin:
                 lines = fin.readlines()
                 line = lines[18].strip()
                 f.write('{}:{}\n'.format(txt[5:][:-4],line.split(':')[1]))
-        
 
-def main():
-    # global PATCH_INFO
-    # with open('./yamls/chop.yaml') as f:
-    #     PATCH_INFO = yaml.load(f)
+def combine_switch():
+    global PATCH_INFO
+    LOG_INFO('====> Begin reading yaml')
+    with open('./yamls/chop.yaml') as f:
+        PATCH_INFO = yaml.load(f,Loader=yaml.FullLoader)
     # combine(Dataset.RESULT,'RGGB')
     # combine(Dataset.RYYB_RESULT,'RYYB')
     # combine(Dataset.Random_RESULT,'Random')
@@ -93,30 +94,67 @@ def main():
     # combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_RGBG')
 
     # for val in ['0.05','0.10','0.20','0.50']:
-    #     combine(Dataset.RESULT+' noise={}'.format(val),'RGGB_noise={}'.format(val))
-    #     combine(Dataset.RYYB_RESULT+' noise={}'.format(val),'RYYB_noise={}'.format(val))
-    #     combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
-    #     combine(Dataset.RB_G_RESULT+' noise={}'.format(val),'RB_G_noise={}'.format(val))
-    #     combine(Dataset.RB_G_DENOISE_RESULT+' noise={}'.format(val),'RB_G_DENOISE_noise={}'.format(val))
-    #     combine(Dataset.JointPixel_RGBG_RESULT+' noise={}'.format(val),'JointPixel_RGBG_noise={}'.format(val))
+    for val in ['0.05','0.20']:
+    # for val in ['0.05']:
+        combine(Dataset.RESULT+' noise={}'.format(val),'RGGB_noise={}'.format(val))
+        # combine(Dataset.RYYB_RESULT+' noise={}'.format(val),'RYYB_noise={}'.format(val))
+        # combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
+        combine(Dataset.RB_G_RESULT+' noise={}'.format(val),'RB_G_noise={}'.format(val))
+        combine(Dataset.RB_G_DENOISE_RESULT+' noise={}'.format(val),'RB_G_DENOISE_noise={}'.format(val))
+        combine(Dataset.JointPixel_RGBG_RESULT+' noise={}'.format(val),'JointPixel_RGBG_noise={}'.format(val))
 
-    compare_psnr(r'joint/joint(RGGB)','tiff','RGGB')
-    compare_psnr(r'joint/joint(RYYB)','tiff','RYYB')
-    compare_psnr(r'joint/joint(Random)','tiff','Random')
-    compare_psnr(r'joint/joint(Arbitrary)','tiff','Arbitrary')
-    compare_psnr(r'joint/joint(RB_G)','tiff','RB_G')
-    compare_psnr(r'joint/joint(RB_G_DENOISE)','tiff','RB_G_DENOISE')
-    compare_psnr(r'joint/joint(JointPixel_RGBG)','tiff','JointPixel_RGBG')
+def compare_psnr_switch():
+    # compare_psnr(r'joint/joint(RGGB)','tiff','RGGB')
+    # compare_psnr(r'joint/joint(RYYB)','tiff','RYYB')
+    # compare_psnr(r'joint/joint(Random)','tiff','Random')
+    # compare_psnr(r'joint/joint(Arbitrary)','tiff','Arbitrary')
+    # compare_psnr(r'joint/joint(RB_G)','tiff','RB_G')
+    # compare_psnr(r'joint/joint(RB_G_DENOISE)','tiff','RB_G_DENOISE')
+    # compare_psnr(r'joint/joint(JointPixel_RGBG)','tiff','JointPixel_RGBG')
 
-    for val in ['0.05','0.10','0.20','0.50']:
+    # for val in ['0.05','0.10','0.20','0.50']:
+    for val in ['0.05','0.20']:
+    # for val in ['0.05']:
         compare_psnr(r'joint/joint(RGGB_noise={})'.format(val),'tiff','RGGB_noise={}'.format(val))
-        compare_psnr(r'joint/joint(RYYB_noise={})'.format(val),'tiff','RYYB_noise={}'.format(val))
-        compare_psnr(r'joint/joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(RYYB_noise={})'.format(val),'tiff','RYYB_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
         compare_psnr(r'joint/joint(RB_G_noise={})'.format(val),'tiff','RB_G_noise={}'.format(val))
         compare_psnr(r'joint/joint(RB_G_DENOISE_noise={})'.format(val),'tiff','RB_G_DENOISE_noise={}'.format(val))
         compare_psnr(r'joint/joint(JointPixel_RGBG_noise={})'.format(val),'tiff','JointPixel_RGBG_noise={}'.format(val))
 
-    extract()
+def plot(dir_path,name):
+    print(dir_path)
+    with open(os.path.join(dir_path,'results.txt')) as f:
+        lines = f.readlines()
+    psnrs = {l.strip().split(':')[0]:float(l.strip().split(':')[1]) for l in lines}
+    mapping = defaultdict(list)
+    # for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+    #     for noise in ['','0.05','0.10','0.20','0.50']:
+    for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+        for noise in ['0.05','0.20']:
+            key = '{}_noise={}'.format(cfa,noise) if noise!='' else cfa
+            mapping[cfa].append(psnrs[key])
+
+    # noises = [0,0.05,0.10,0.20,0.50]
+    # for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+    noises = [0.05,0.20]
+    for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+        plt.plot(noises,mapping[cfa],label=cfa)
+    for noise in noises:
+        plt.vlines(noises,ymin=28,ymax=49,color='gray',linestyles='dotted') 
+    plt.legend()
+    plt.xlim(-0.02,0.52)
+    plt.ylim(28,50)
+    plt.title('Demosaicking Performance')
+    plt.xlabel('$\sigma$')
+    plt.ylabel('PSNR/dB')
+    plt.savefig(name)
+
+def main():
+    # combine_switch()
+    # compare_psnr_switch()
+    # extract('result')
+    plot('result','result3.png')
 
 if __name__ == '__main__':
     main()

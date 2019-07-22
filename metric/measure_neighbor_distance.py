@@ -41,8 +41,9 @@ with open('neighbor_distance_mask.txt','w') as f:
             a,b = img[::2],img[1::2]
         a = a*mask[:a.shape[0],:a.shape[1]]
         b = b*mask[:b.shape[0],:b.shape[1]]
-        dt = np.mean(np.abs(a-b))
-        delta = np.mean(np.square((a-b)/2))
+        total = np.sum(mask[:a.shape[0],:a.shape[1]])
+        dt = np.sum(np.abs(a-b))/total
+        delta = np.sum(np.square((a-b)/2))/total
         f.write('{}\tabs:{}\tmse:{}\t-log10(mse):{}\n'.format(tif,dt,delta,-np.log10(delta)))
     
     

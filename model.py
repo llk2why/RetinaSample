@@ -244,7 +244,6 @@ class RB_G_DENOISE(nn.Module):
         output = torch.cat([RnB[:, 0:1, :, :], green, RnB[:, 1:2, :, :]], dim=1)
         return output
 
-
 class JointPixel_RGBG(nn.Module):
     def __init__(self, resnet_level=2):
         super(JointPixel_RGBG, self).__init__()
@@ -276,3 +275,6 @@ class JointPixel_RGBG(nn.Module):
         output = self.stage2(output)
         output = self.stage3(output) + self.shortcut(input)
         return output
+
+
+#TODO: explore new model for joint Pixel
