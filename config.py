@@ -6,7 +6,7 @@ PATCH_SIZE = 128
 PATCH_STRIDE = 64
 
 plat = platform.system()
-root = r'C:\fastdata' if plat == 'Windows' else '/home/lincoln/data'
+root = r'C:\fastdata' if plat == 'Windows' else '/fastdata/retina'
 
 
 def join_root(dirname):
