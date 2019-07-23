@@ -61,10 +61,8 @@ class DatasetFromFolder(data.Dataset):
             target = self.target_transform(target)
 
         if self.noise>0.0:
-            # input = self.__add_noise__(input,target,self.avg_energy[index])
-            input = self.__add_noise2__(input,target,self.avg_energy[index])
-        # print('input',input[0,:6,:6])
-        # exit()
+            input = self.__add_noise__(input,target,self.avg_energy[index])
+            # input = self.__add_noise2__(input,target,self.avg_energy[index]) 
     
         return input, target
 

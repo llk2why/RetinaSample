@@ -1,5 +1,6 @@
 import os
 import cv2
+import time
 import torch
 import argparse
 import numpy as np
@@ -19,6 +20,9 @@ from utilities import LOG_INFO, load_train_data, load_test_data
 from config import *
 from dataset import DatasetFromFolder
 from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
+from selflogger import SelfLogger
+
+logger = SelfLogger('./log/log','run')
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_labels", default=4, type=int, help="Number of labels.")
@@ -26,7 +30,7 @@ parser.add_argument("--epochs", default=1, type=int, help="Number of epoch.")
 parser.add_argument("--batch_size", default=8, type=int, help="Batch size to use during training.")
 parser.add_argument("--display_freq", default=20, type=int, help="Display frequency")
 parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for optimizer")
-parser.add_argument("--debug", default=False, type=bool, help="Switch on debug")
+parser.add_argument("--debug", default=False, action='store_true', help="Switch on debug")
 parser.add_argument("--noise", default=0, type=float, help="noise std")
 parser.add_argument("--model_type", default='RB_G_DENOISE', type=str,
                     choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE', 'JointPixel_RGBG'],
@@ -134,6 +138,7 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
 
 
 def main():
+    start_time = time.time()
     LOG_INFO('===> Building model')
     net = model.__dict__[args.model_type](4).to(device)
     optimizer = optim.Adam(net.parameters(), lr=args.lr, betas=(0.9, 0.999), eps=1e-08)
@@ -192,8 +197,10 @@ def main():
         os.makedirs('model')
     torch.save(net.state_dict(),
                'model/{}_model_noise={:.2f}_epoch={}.pth'.format(args.model_type, args.noise, args.epochs))
-    with open('log','a') as f:
-        f.write('Finish {} with noise {}\n'.format(args.model_type,args.noise))
+    end_time = time.time()
+    duration = end_time - start_time
+    
+    logger.info('Finish {} with noise {} in {:.2f} seconds.'.format(args.model_type,args.noise,duration))
 
 
 if __name__ == '__main__':
