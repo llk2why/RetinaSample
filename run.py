@@ -198,10 +198,10 @@ def main():
                              batch_size=args.batch_size,
                              shuffle=False)
 
-    # LOG_INFO('===> Begin training and testing')
-    # for epoch in range(1, args.epochs + 1):
-    #     train_loss = train(epoch, net, train_loader, optimizer, criterion)
-        # test_loss = evaluate(epoch, net, test_loader, criterion)
+    LOG_INFO('===> Begin training and testing')
+    for epoch in range(1, args.epochs + 1):
+        train_loss = train(epoch, net, train_loader, optimizer, criterion)
+        test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')
     test_loss = evaluate(0, net, test_loader, criterion, save=True, names=test_data.filenames)
     if not os.path.exists('model'):
