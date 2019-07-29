@@ -67,15 +67,23 @@ class Dataset:
     JointPixel_RGBG_MOSAIC_DIR_TEST = MOSAIC_DIR_TEST_TEMPLATE.format(Name)
     JointPixel_RGBG_RESULT = RESULT_TEMPLATE.format(Name)
 
+    # [INPUT] train JointPixel_Triple input dir & test JointPixel_Triple input dir
+    Name = 'JointPixel_Triple'
+    JointPixel_Triple_MOSAIC_DIR = MOSAIC_DIR_TEMPLATE.format(Name)
+    JointPixel_Triple_MOSAIC_DIR_TEST = MOSAIC_DIR_TEST_TEMPLATE.format(Name)
+    JointPixel_Triple_RESULT = RESULT_TEMPLATE.format(Name)
 
-"""     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
+
+""" 
+    RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
     CHOPPED_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Chopped'
     # MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic'
     MOSAIC_DIR = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Deep DM_SR'
     CHOPPED_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Chopped Test'
     # MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test'
     MOSAIC_DIR_TEST = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Test Deep DM_SR'
-    RESULT = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Reconstruct Deep DM_SR' """
+    RESULT = r'C:\data\dataset\Sandwich 0612 fullsize Mosaic Reconstruct Deep DM_SR' 
+"""
 
 
 class YAML:
@@ -83,7 +91,7 @@ class YAML:
 
 
 def generate_sample_matrix(shape):
-    save_name = 'SampleTemplate.npy'
+    save_name = 'Template/SampleTemplate.npy'
     sample = np.random.randint(0, 3, shape)
     np.save(save_name, sample)
     print('Generated sampling matrix:\n{} \nand saved to file "{}" '.format(sample, save_name))
@@ -91,7 +99,7 @@ def generate_sample_matrix(shape):
 
 # BGGR sample matrix
 def generate_bayer_sample_matrix(shape):
-    save_name = 'BayerTemplate.npy'
+    save_name = 'Template/BayerTemplate.npy'
     tile = np.array([[2, 1], [1, 0]])
     sample = np.tile(tile, np.array(shape) // 2)
     np.save(save_name, sample)
@@ -101,7 +109,7 @@ def generate_bayer_sample_matrix(shape):
 # RYYB sample matrix
 def generate_ryyb_sample_matrix(shape):
     r, c = shape
-    save_name = 'RYYBTemplate.npy'
+    save_name = 'Template/RYYBTemplate.npy'
     tile = np.array([[[1, 0, 0], [1, 1, 0]], [[1, 1, 0], [0, 0, 1]]])
     sample = np.tile(tile, (r // 2, c // 2, 1))
     np.save(save_name, sample)
@@ -111,7 +119,7 @@ def generate_ryyb_sample_matrix(shape):
 # RB_G sample matrix
 def generate_rb_g_sample_matrix(shape):
     r, c = shape
-    save_name = 'RB_GTemplate.npy'
+    save_name = 'Template/RB_GTemplate.npy'
     tile = np.array([[[1, 1, 0], [0, 1, 1]], [[0, 1, 1], [1, 1, 0]]])
     sample = np.tile(tile, (r // 2, c // 2, 1))
     np.save(save_name, sample)
@@ -120,7 +128,7 @@ def generate_rb_g_sample_matrix(shape):
 
 def generate_random_sample_matrix(shape):
     r, c = shape
-    save_name = 'RandomTemplate.npy'
+    save_name = 'Template/RandomTemplate.npy'
     tile = np.random.randint(0, 3, (r // 2, c // 2))
     cfa = np.tile(tile, (2, 2))
     sample = np.zeros((r, c, 3))
@@ -133,12 +141,22 @@ def generate_random_sample_matrix(shape):
 
 def generate_jointpixel_rgbg_sample_matrix(shape):
     r, c = shape
-    save_name = 'JointPixel_RGBGTemplate.npy'
+    save_name = 'Template/JointPixel_RGBGTemplate.npy'
     tile = np.array([[0, 1, 2, 1], [1, 0, 1, 2], [2, 1, 0, 1], [1, 2, 1, 0]])
     tile = np.repeat(tile, 2, axis=0)
     sample = np.tile(tile, (r // 8, c // 4))
     np.save(save_name, sample)
     print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample, save_name))
+
+def generate_jointpixel_triple_sample_matrix(shape):
+    r, c = shape
+    save_name = 'Template/JointPixel_TripleTemplate.npy'
+    tile = np.array([[0,0,1,1], [1,0,1,2], [1,1,2,2]])
+    pool = np.tile(tile, (r // 3 +1, c // 4 +1))
+    sample = pool[:r,:c]
+    np.save(save_name, sample)
+    print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample, save_name))
+    print(sample.shape)
 
 
 if __name__ == '__main__':
@@ -148,6 +166,8 @@ if __name__ == '__main__':
     # generate_random_sample_matrix(shape)
     # generate_rb_g_sample_matrix(shape)
     # generate_jointpixel_rgbg_sample_matrix(shape)
+    generate_jointpixel_triple_sample_matrix(shape)
+    
 
 file_path = os.path.split(os.path.abspath(__file__))[0]
 
@@ -156,3 +176,4 @@ RYYB_SAMPLE_MATRIX = np.array(np.load(os.path.join(file_path,'Template/RYYBTempl
 RANDOM_SAMPLE_MATRIX = np.array(np.load(os.path.join(file_path,'Template/RandomTemplate.npy')))
 RB_G_SAMPLE_MATRIX = np.array(np.load(os.path.join(file_path,'Template/RB_GTemplate.npy')))
 JOINTPIXEL_RGBG_MATRIX = np.array(np.load(os.path.join(file_path,'Template/JointPixel_RGBGTemplate.npy')))
+JOINTPIXEL_Triple_MATRIX = np.array(np.load(os.path.join(file_path,'Template/JointPixel_TripleTemplate.npy')))

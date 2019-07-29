@@ -69,21 +69,34 @@ class DatasetFromFolder(data.Dataset):
 
     def __add_noise__(self,x,y,avg_energy):
         # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
+        r,c = x.shape
         std = avg_energy*self.noise*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
         if self.model_type in ['JointPixel_RGBG']:
-            e[:,1::2] = e[:,::2]/2
-            e[:,::2] = e[:,::2]/2
+            e[1::2,:] = e[::2,:]/2
+            e[::2,:] = e[::2,:]/2
+        # elif self.model_type in ['JointPixel_Triple']:
+        #     tile = torch.tensor([[0,0,1,1],[2,0,1,3],[2,2,3,3]])
+        #     # i = torch.repeat_interleave(
+        #     #         torch.repeat_interleave(torch.arange(0,c//4).view(1,-1)*4,4,dim=1),
+        #     #         4,dim = 0)
+        #     # j = torch.repeat_interleave(
+        #     #         torch.repeat_interleave(torch.arange(0,r//3+1).view(1,-1)*4*c//4,3,dim=0),
+        #     #         4,dim = 1)
+        #     i = torch.repeat_interleave(torch.arange(0,c//4).view(1,-1)*4,4,dim=1)
+        #     j = torch.repeat_interleave(torch.arange(0,r//3+1).view(-1,1)*4*c//4,3,dim=0)
+        #     index_map = torch.repeat_interleave(torch.repeat_interleave(i+j,3,dim=0),4,dim = 1)
+            
+            
+
+            index = index + i
+            index = index + j
         x = x+e*(x>0).float()
         x[x>1]=1.0
         x[x<0]=0.0
         return x
 
-    # TODO:
-    # positive noise mean value
-    # pay attention to value mapping, e.g. std
-    # joint pixel with special half map noise
     def __add_noise2__(self,x,y,avg_energy):
         # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
         std = avg_energy*self.noise*torch.ones(x.shape)

@@ -33,7 +33,8 @@ parser.add_argument("--lr", default=0.0001, type=float, help="Learning rate for 
 parser.add_argument("--debug", default=False, action='store_true', help="Switch on debug")
 parser.add_argument("--noise", default=0, type=float, help="noise std")
 parser.add_argument("--model_type", default='RB_G_DENOISE', type=str,
-                    choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE', 'JointPixel_RGBG'],
+                    choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE',\
+                             'JointPixel_RGBG','JointPixel_Triple'],
                     help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
@@ -116,6 +117,8 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                     result_dir = Dataset.RB_G_DENOISE_RESULT
                 elif args.model_type == 'JointPixel_RGBG':
                     result_dir = Dataset.JointPixel_RGBG_RESULT
+                elif args.model_type == 'JointPixel_TripleTemplate':
+                    result_dir = Dataset.JointPixel_Triple_RESULT
                 if args.noise > 0:
                     result_dir = result_dir + ' noise={:.2f}'.format(args.noise)
                 if not os.path.exists(result_dir):
@@ -165,6 +168,9 @@ def main():
     elif args.model_type == 'JointPixel_RGBG':
         train_x_dir = Dataset.JointPixel_RGBG_MOSAIC_DIR
         test_x_dir = Dataset.JointPixel_RGBG_MOSAIC_DIR_TEST
+    elif args.model_type == 'JointPixel_Triple':
+        train_x_dir = Dataset.JointPixel_Triple_MOSAIC_DIR
+        test_x_dir = Dataset.JointPixel_Triple_MOSAIC_DIR_TEST
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST
 

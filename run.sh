@@ -26,11 +26,19 @@
 
 
 # python run.py --model_type RB_G --noise 0.10
-python run.py --model_type RB_G --noise 0.15
-python run.py --model_type JointPixel_RGBG
+# python run.py --model_type RB_G --noise 0.15
+# python run.py --model_type JointPixel_RGBG
 # python run.py --model_type DemosaicSR 0.15
 # python run.py --model_type RYYB --noise 0.15
 # python run.py --model_type RYYB --noise 0.2
 # python run.py --model_type RYYB --noise 0.4
 # python run.py --model_type RYYB --noise 0.5
 # python run.py --model_type Random --noise 0.4
+
+for i in JointPixel_RGBG ;
+do 
+    for j in 0.02 0.05 0.08 0.1 0.15 0.2 0.25 0.3 0.4 0.5 ;
+    do
+        python run.py --model_type $i --noise $j
+    done
+done
