@@ -93,12 +93,12 @@ def combine_switch():
     # combine(Dataset.RB_G_DENOISE_RESULT,'RB_G_DENOISE')
     # combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_RGBG')
 
-    # for val in ['0.05','0.10','0.20','0.50']:
-    for val in ['0.05','0.20']:
+    for val in ['0.02','0.05','0.08','0.10','0.15','0.20','0.25','0.30','0.40','0.50']:
+    # for val in ['0.05','0.20']:
     # for val in ['0.05']:
         combine(Dataset.RESULT+' noise={}'.format(val),'RGGB_noise={}'.format(val))
-        # combine(Dataset.RYYB_RESULT+' noise={}'.format(val),'RYYB_noise={}'.format(val))
-        # combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
+        combine(Dataset.RYYB_RESULT+' noise={}'.format(val),'RYYB_noise={}'.format(val))
+        combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
         combine(Dataset.RB_G_RESULT+' noise={}'.format(val),'RB_G_noise={}'.format(val))
         combine(Dataset.RB_G_DENOISE_RESULT+' noise={}'.format(val),'RB_G_DENOISE_noise={}'.format(val))
         combine(Dataset.JointPixel_RGBG_RESULT+' noise={}'.format(val),'JointPixel_RGBG_noise={}'.format(val))
@@ -112,12 +112,13 @@ def compare_psnr_switch():
     # compare_psnr(r'joint/joint(RB_G_DENOISE)','tiff','RB_G_DENOISE')
     # compare_psnr(r'joint/joint(JointPixel_RGBG)','tiff','JointPixel_RGBG')
 
+    for val in ['0.02','0.05','0.08','0.10','0.15','0.20','0.25','0.30','0.40','0.50']:
     # for val in ['0.05','0.10','0.20','0.50']:
-    for val in ['0.05','0.20']:
+    # for val in ['0.05','0.20']:
     # for val in ['0.05']:
         compare_psnr(r'joint/joint(RGGB_noise={})'.format(val),'tiff','RGGB_noise={}'.format(val))
-        # compare_psnr(r'joint/joint(RYYB_noise={})'.format(val),'tiff','RYYB_noise={}'.format(val))
-        # compare_psnr(r'joint/joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
+        compare_psnr(r'joint/joint(RYYB_noise={})'.format(val),'tiff','RYYB_noise={}'.format(val))
+        compare_psnr(r'joint/joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
         compare_psnr(r'joint/joint(RB_G_noise={})'.format(val),'tiff','RB_G_noise={}'.format(val))
         compare_psnr(r'joint/joint(RB_G_DENOISE_noise={})'.format(val),'tiff','RB_G_DENOISE_noise={}'.format(val))
         compare_psnr(r'joint/joint(JointPixel_RGBG_noise={})'.format(val),'tiff','JointPixel_RGBG_noise={}'.format(val))
@@ -128,17 +129,23 @@ def plot(dir_path,name):
         lines = f.readlines()
     psnrs = {l.strip().split(':')[0]:float(l.strip().split(':')[1]) for l in lines}
     mapping = defaultdict(list)
-    # for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
-    #     for noise in ['','0.05','0.10','0.20','0.50']:
-    for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
-        for noise in ['0.05','0.20']:
+    print(psnrs.keys())
+    for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+    # for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+        # for noise in ['','0.05','0.10','0.20','0.50']:
+        # for noise in ['0.05','0.20']:
+        for noise in ['','0.02','0.05','0.08','0.10','0.15','0.20','0.25','0.30','0.40','0.50']:
             key = '{}_noise={}'.format(cfa,noise) if noise!='' else cfa
             mapping[cfa].append(psnrs[key])
-
+    print(mapping)
     # noises = [0,0.05,0.10,0.20,0.50]
-    # for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
-    noises = [0.05,0.20]
-    for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+    # noises = [0.05,0.20]
+    noises = [0,0.02,0.05,0.08,0.10,0.15,0.20,0.25,0.30,0.40,0.50]
+    # for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+    for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+        print(cfa)
+        print(noises)
+        print(len(mapping[cfa]))
         plt.plot(noises,mapping[cfa],label=cfa)
     for noise in noises:
         plt.vlines(noises,ymin=28,ymax=49,color='gray',linestyles='dotted') 
@@ -151,10 +158,10 @@ def plot(dir_path,name):
     plt.savefig(name)
 
 def main():
-    # combine_switch()
-    # compare_psnr_switch()
-    # extract('result')
-    plot('result','result3.png')
+    combine_switch()
+    compare_psnr_switch()
+    extract('result')
+    plot('result','result4.png')
 
 if __name__ == '__main__':
     main()
