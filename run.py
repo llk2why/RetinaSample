@@ -34,7 +34,7 @@ parser.add_argument("--debug", default=False, action='store_true', help="Switch 
 parser.add_argument("--noise", default=0, type=float, help="noise std")
 parser.add_argument("--model_type", default='RB_G_DENOISE', type=str,
                     choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE',\
-                             'JointPixel_RGBG','JointPixel_Triple'],
+                             'JointPixel_RGBG','JointPixel_Triple','Paramized_RYYB'],
                     help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
@@ -117,8 +117,10 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                     result_dir = Dataset.RB_G_DENOISE_RESULT
                 elif args.model_type == 'JointPixel_RGBG':
                     result_dir = Dataset.JointPixel_RGBG_RESULT
-                elif args.model_type == 'JointPixel_TripleTemplate':
+                elif args.model_type == 'JointPixel_Triple':
                     result_dir = Dataset.JointPixel_Triple_RESULT
+                elif args.model_type == 'Paramized_RYYB':
+                    result_dir = Dataset.Paramized_RYYB_RESULT
                 if args.noise > 0:
                     result_dir = result_dir + ' noise={:.2f}'.format(args.noise)
                 if not os.path.exists(result_dir):
@@ -171,6 +173,9 @@ def main():
     elif args.model_type == 'JointPixel_Triple':
         train_x_dir = Dataset.JointPixel_Triple_MOSAIC_DIR
         test_x_dir = Dataset.JointPixel_Triple_MOSAIC_DIR_TEST
+    elif args.model_type == 'Paramized_RYYB':
+        train_x_dir = Dataset.Paramized_RYYB_MOSAIC_DIR
+        test_x_dir = Dataset.Paramized_RYYB_MOSAIC_DIR_TEST
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST
 
@@ -193,9 +198,9 @@ def main():
                              batch_size=args.batch_size,
                              shuffle=False)
 
-    LOG_INFO('===> Begin training and testing')
-    for epoch in range(1, args.epochs + 1):
-        train_loss = train(epoch, net, train_loader, optimizer, criterion)
+    # LOG_INFO('===> Begin training and testing')
+    # for epoch in range(1, args.epochs + 1):
+    #     train_loss = train(epoch, net, train_loader, optimizer, criterion)
         # test_loss = evaluate(epoch, net, test_loader, criterion)
     LOG_INFO('===> FINISH TRAINING')
     test_loss = evaluate(0, net, test_loader, criterion, save=True, names=test_data.filenames)

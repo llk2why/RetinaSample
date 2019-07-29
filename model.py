@@ -105,7 +105,7 @@ class RYYB(nn.Module):
         output = self.stage1(input)
         output = self.stage2(output)
         output = self.stage3(output)
-        output = output + self.shortcut(input)
+        output = output
         return output
 
 
@@ -306,6 +306,42 @@ class JointPixel_Triple(nn.Module):
         output = self.stage1(input)
         output = self.stage2(output)
         output = self.stage3(output) + self.shortcut(input)
+        return output
+
+
+class Paramized_RYYB(nn.Module):
+    def __init__(self, resnet_level=2):
+        super(Paramized_RYYB, self).__init__()
+
+        self.stage1 = nn.Sequential(OrderedDict([
+            ('stage1_1_conv4x4 ', nn.Conv2d(in_channels=3, out_channels=256,
+                                            kernel_size=4, stride=2, padding=1, bias=True)),
+            ('stage1_2_SP_conv ', nn.PixelShuffle(2)),
+            ('stage1_2_conv4x4', nn.Conv2d(in_channels=64, out_channels=256,
+                                           kernel_size=3, stride=1, padding=1, bias=True)),
+            ('stage1_2_PReLU', nn.PReLU())
+        ]))
+        stage2 = [ResidualBlock() for i in range(resnet_level)]
+        self.stage2 = nn.Sequential(*stage2)
+        self.stage3 = nn.Sequential(OrderedDict([
+            # ('stage3_1_SP_conv ',nn.PixelShuffle(2)),
+            ('stage3_2_conv3x3 ', nn.Conv2d(in_channels=256, out_channels=256,
+                                            kernel_size=3, stride=1, padding=1, bias=True)),
+            ('stage3_2_PReLU', nn.PReLU()),
+            ('stage3_3_conv3x3', nn.Conv2d(in_channels=256, out_channels=3,
+                                           kernel_size=3, stride=1, padding=1, bias=True))
+        ]))
+        self.shortcut = nn.Sequential()
+
+    def forward(self, input):
+        alpha = Variable(torch.FloatTensor([1])).cuda()
+        beta = Variable(torch.FloatTensor([1])).cuda()
+        r,g = input[0,:,:],input[1,:,:]
+        g[g>0],r[g>0] = alpha*r[g>0]+beta*g[g>0],0
+        input[0,:,:],input[1,:,:] = r,g
+        output = self.stage1(input)
+        output = self.stage2(output)
+        output = self.stage3(output)
         return output
 
 

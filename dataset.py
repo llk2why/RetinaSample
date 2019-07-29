@@ -50,7 +50,6 @@ class DatasetFromFolder(data.Dataset):
         input = load_img(self.image_train_filenames[index])
         target = load_img(self.image_target_filenames[index])
         if self.model_type == 'RYYB':
-            input = input
             r,g = input[:,:,0],input[:,:,1]
             g[g>0],r[g>0] = r[g>0]+g[g>0],0
 
@@ -69,29 +68,18 @@ class DatasetFromFolder(data.Dataset):
 
     def __add_noise__(self,x,y,avg_energy):
         # avg_energy = torch.sqrt(torch.sum(torch.pow(y.float(),2))/self.num)
-        r,c = x.shape
         std = avg_energy*self.noise*torch.ones(x.shape)
         mu = torch.zeros(x.shape)
         e = torch.normal(mu,std)
-        if self.model_type in ['JointPixel_RGBG']:
-            e[1::2,:] = e[::2,:]/2
-            e[::2,:] = e[::2,:]/2
-        # elif self.model_type in ['JointPixel_Triple']:
-        #     tile = torch.tensor([[0,0,1,1],[2,0,1,3],[2,2,3,3]])
-        #     # i = torch.repeat_interleave(
-        #     #         torch.repeat_interleave(torch.arange(0,c//4).view(1,-1)*4,4,dim=1),
-        #     #         4,dim = 0)
-        #     # j = torch.repeat_interleave(
-        #     #         torch.repeat_interleave(torch.arange(0,r//3+1).view(1,-1)*4*c//4,3,dim=0),
-        #     #         4,dim = 1)
-        #     i = torch.repeat_interleave(torch.arange(0,c//4).view(1,-1)*4,4,dim=1)
-        #     j = torch.repeat_interleave(torch.arange(0,r//3+1).view(-1,1)*4*c//4,3,dim=0)
-        #     index_map = torch.repeat_interleave(torch.repeat_interleave(i+j,3,dim=0),4,dim = 1)
-            
-            
+        # Attension: the shape of image is (channel,row,col)
+        if self.model_type in ['JointPixel_RGBG']: 
+            e[:,1::2] = e[:,::2]/2
+            e[:,::2] = e[:,::2]/2
+        elif self.model_type in ['JointPixel_Triple']:
+            e[:,:,:2] = e[:,:,:2]/3
+            e[:,1::3] = e[:,::3]
+            e[:,2::3] = e[:,::3]
 
-            index = index + i
-            index = index + j
         x = x+e*(x>0).float()
         x[x>1]=1.0
         x[x<0]=0.0
@@ -102,6 +90,7 @@ class DatasetFromFolder(data.Dataset):
         std = avg_energy*self.noise*torch.ones(x.shape)
         mu = torch.zeros(x.shape)+10/255
         e = torch.normal(mu,std)
+        # Attension: the shape of image is (channel,row,col)
         if self.model_type in ['JointPixel_RGBG']:
             e[:,1::2] = e[:,::2]/2
             e[:,::2] = e[:,::2]/2

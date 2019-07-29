@@ -73,6 +73,12 @@ class Dataset:
     JointPixel_Triple_MOSAIC_DIR_TEST = MOSAIC_DIR_TEST_TEMPLATE.format(Name)
     JointPixel_Triple_RESULT = RESULT_TEMPLATE.format(Name)
 
+    # [INPUT] train Paramized_RYYB input dir & test Paramized_RYYB input dir
+    Name = 'Paramized_RYYB'
+    Paramized_RYYB_MOSAIC_DIR = RYYB_MOSAIC_DIR
+    Paramized_RYYB_MOSAIC_DIR_TEST = RYYB_MOSAIC_DIR_TEST
+    Paramized_RYYB_RESULT = RESULT_TEMPLATE.format(Name)
+
 
 """ 
     RAW_DIR = r'C:\data\dataset\Sandwich 0612 fullsize'
