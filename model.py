@@ -76,7 +76,8 @@ class DemosaicSR(nn.Module):
         output = output + self.shortcut(input)
         return output
 
-
+# TODO:
+#  Special residual path for RYYB model
 class RYYB(nn.Module):
     def __init__(self, resnet_level=2):
         super(RYYB, self).__init__()
@@ -308,7 +309,8 @@ class JointPixel_Triple(nn.Module):
         output = self.stage3(output) + self.shortcut(input)
         return output
 
-
+# TODO:
+#  Special residual path for RYYB-like model
 class Paramized_RYYB(nn.Module):
     def __init__(self, resnet_level=2):
         super(Paramized_RYYB, self).__init__()
