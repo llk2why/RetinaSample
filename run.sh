@@ -40,7 +40,7 @@
 python run.py --model_type RYYB
 python run.py --model_type JointPixel_Triple
 python run.py --model_type Paramized_RYYB
-for i in RYYB JointPixel_Triple Paramized_RYYB;
+for i in JointPixel_Triple Paramized_RYYB;
 do 
     for j in 0.02 0.05 0.08 0.1 0.15 0.2 0.25 0.3 0.4 0.5 ;
     do

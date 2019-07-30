@@ -105,7 +105,7 @@ class RYYB(nn.Module):
         output = self.stage1(input)
         output = self.stage2(output)
         output = self.stage3(output)
-        output = output
+        # output = output + self.shortcut(output)
         return output
 
 
@@ -324,21 +324,22 @@ class Paramized_RYYB(nn.Module):
         stage2 = [ResidualBlock() for i in range(resnet_level)]
         self.stage2 = nn.Sequential(*stage2)
         self.stage3 = nn.Sequential(OrderedDict([
-            # ('stage3_1_SP_conv ',nn.PixelShuffle(2)),
             ('stage3_2_conv3x3 ', nn.Conv2d(in_channels=256, out_channels=256,
                                             kernel_size=3, stride=1, padding=1, bias=True)),
             ('stage3_2_PReLU', nn.PReLU()),
             ('stage3_3_conv3x3', nn.Conv2d(in_channels=256, out_channels=3,
                                            kernel_size=3, stride=1, padding=1, bias=True))
         ]))
+        self.alpha = nn.Parameter(torch.Tensor(1))
+        self.beta = nn.Parameter(torch.Tensor(1))
         self.shortcut = nn.Sequential()
 
     def forward(self, input):
-        alpha = Variable(torch.FloatTensor([1])).cuda()
-        beta = Variable(torch.FloatTensor([1])).cuda()
-        r,g = input[0,:,:],input[1,:,:]
-        g[g>0],r[g>0] = alpha*r[g>0]+beta*g[g>0],0
-        input[0,:,:],input[1,:,:] = r,g
+
+        input[:,1,:,:][input[:,1,:,:]>0] = \
+            self.alpha*input[:,0,:,:][input[:,1,:,:]>0]+self.beta*input[:,1,:,:][input[:,1,:,:]>0]
+        input[:,0,:,:][input[:,1,:,:]>0] = input[:,0,:,:][input[:,1,:,:]>0].fill_(0)
+
         output = self.stage1(input)
         output = self.stage2(output)
         output = self.stage3(output)

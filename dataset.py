@@ -49,9 +49,11 @@ class DatasetFromFolder(data.Dataset):
     def __getitem__(self, index):
         input = load_img(self.image_train_filenames[index])
         target = load_img(self.image_target_filenames[index])
-        if self.model_type == 'RYYB':
-            r,g = input[:,:,0],input[:,:,1]
-            g[g>0],r[g>0] = r[g>0]+g[g>0],0
+        # if self.model_type == 'RYYB':
+        #     r,g = input[:,:,0],input[:,:,1]
+        #     g[g>0] = r[g>0]+g[g>0]
+        #     r[g>0] = np.zeros_like(r[g>0])
+        #     input[:,:,0],input[:,:,1] = r,g
 
         # ATTENTION, ToTensor will change dimension order and value range!
         if self.input_transform:
@@ -59,6 +61,12 @@ class DatasetFromFolder(data.Dataset):
         if self.target_transform:
             target = self.target_transform(target)
 
+        if self.model_type == 'RYYB':
+            r = input[0,:,:]
+            g = input[1,:,:]
+            g[g>0] = r[g>0]+g[g>0]
+            r[g>0] = torch.zeros(g[g>0].shape)
+            input[0,:,:],input[1,:,:] = r,g
         if self.noise>0.0:
             input = self.__add_noise__(input,target,self.avg_energy[index])
             # input = self.__add_noise2__(input,target,self.avg_energy[index]) 

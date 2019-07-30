@@ -59,8 +59,6 @@ def compare_psnr(img_dir,suffix,tag):
             else:
                 std_name = file.split('.')[0]
             std_fpath = os.path.join(Dataset.RAW_DIR,std_name+'.TIF')
-            # print(fpath)
-            # print(std_fpath)
             im_y = cv2.imread(fpath)
             im_x = cv2.imread(std_fpath)
             psnr = get_psnr(im_x,im_y)
@@ -86,42 +84,50 @@ def combine_switch():
     with open('./yamls/chop.yaml') as f:
         PATCH_INFO = yaml.load(f,Loader=yaml.FullLoader)
     # combine(Dataset.RESULT,'RGGB')
-    # combine(Dataset.RYYB_RESULT,'RYYB')
+    combine(Dataset.RYYB_RESULT,'RYYB')
     # combine(Dataset.Random_RESULT,'Random')
     # combine(Dataset.Arbitrary_RESULT,'Arbitrary')
     # combine(Dataset.RB_G_RESULT,'RB_G')
     # combine(Dataset.RB_G_DENOISE_RESULT,'RB_G_DENOISE')
     # combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_RGBG')
+    combine(Dataset.JointPixel_RGBG_RESULT,'JointPixel_Triple')
+    # combine(Dataset.JointPixel_RGBG_RESULT,'Paramized_RYYB')
 
     for val in ['0.02','0.05','0.08','0.10','0.15','0.20','0.25','0.30','0.40','0.50']:
     # for val in ['0.05','0.20']:
     # for val in ['0.05']:
-        combine(Dataset.RESULT+' noise={}'.format(val),'RGGB_noise={}'.format(val))
+        # combine(Dataset.RESULT+' noise={}'.format(val),'RGGB_noise={}'.format(val))
         combine(Dataset.RYYB_RESULT+' noise={}'.format(val),'RYYB_noise={}'.format(val))
-        combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
-        combine(Dataset.RB_G_RESULT+' noise={}'.format(val),'RB_G_noise={}'.format(val))
-        combine(Dataset.RB_G_DENOISE_RESULT+' noise={}'.format(val),'RB_G_DENOISE_noise={}'.format(val))
-        combine(Dataset.JointPixel_RGBG_RESULT+' noise={}'.format(val),'JointPixel_RGBG_noise={}'.format(val))
+        # combine(Dataset.Random_RESULT+' noise={}'.format(val),'Random_noise={}'.format(val))
+        # combine(Dataset.RB_G_RESULT+' noise={}'.format(val),'RB_G_noise={}'.format(val))
+        # combine(Dataset.RB_G_DENOISE_RESULT+' noise={}'.format(val),'RB_G_DENOISE_noise={}'.format(val))
+        # combine(Dataset.JointPixel_RGBG_RESULT+' noise={}'.format(val),'JointPixel_RGBG_noise={}'.format(val))
+        combine(Dataset.JointPixel_Triple_RESULT+' noise={}'.format(val),'JointPixel_Triple_noise={}'.format(val))
+        # combine(Dataset.Paramized_RYYB_RESULT+' noise={}'.format(val),'Paramized_RYYB_noise={}'.format(val))
 
 def compare_psnr_switch():
     # compare_psnr(r'joint/joint(RGGB)','tiff','RGGB')
-    # compare_psnr(r'joint/joint(RYYB)','tiff','RYYB')
+    compare_psnr(r'joint/joint(RYYB)','tiff','RYYB')
     # compare_psnr(r'joint/joint(Random)','tiff','Random')
     # compare_psnr(r'joint/joint(Arbitrary)','tiff','Arbitrary')
     # compare_psnr(r'joint/joint(RB_G)','tiff','RB_G')
     # compare_psnr(r'joint/joint(RB_G_DENOISE)','tiff','RB_G_DENOISE')
     # compare_psnr(r'joint/joint(JointPixel_RGBG)','tiff','JointPixel_RGBG')
+    compare_psnr(r'joint/joint(JointPixel_Triple)','tiff','JointPixel_Triple')
+    # compare_psnr(r'joint/joint(Paramized_RYYB)','tiff','Paramized_RYYB')
 
     for val in ['0.02','0.05','0.08','0.10','0.15','0.20','0.25','0.30','0.40','0.50']:
     # for val in ['0.05','0.10','0.20','0.50']:
     # for val in ['0.05','0.20']:
     # for val in ['0.05']:
-        compare_psnr(r'joint/joint(RGGB_noise={})'.format(val),'tiff','RGGB_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(RGGB_noise={})'.format(val),'tiff','RGGB_noise={}'.format(val))
         compare_psnr(r'joint/joint(RYYB_noise={})'.format(val),'tiff','RYYB_noise={}'.format(val))
-        compare_psnr(r'joint/joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
-        compare_psnr(r'joint/joint(RB_G_noise={})'.format(val),'tiff','RB_G_noise={}'.format(val))
-        compare_psnr(r'joint/joint(RB_G_DENOISE_noise={})'.format(val),'tiff','RB_G_DENOISE_noise={}'.format(val))
-        compare_psnr(r'joint/joint(JointPixel_RGBG_noise={})'.format(val),'tiff','JointPixel_RGBG_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(Random_noise={})'.format(val),'tiff','Random_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(RB_G_noise={})'.format(val),'tiff','RB_G_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(RB_G_DENOISE_noise={})'.format(val),'tiff','RB_G_DENOISE_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(JointPixel_RGBG_noise={})'.format(val),'tiff','JointPixel_RGBG_noise={}'.format(val))
+        compare_psnr(r'joint/joint(JointPixel_Triple_noise={})'.format(val),'tiff','JointPixel_Tripl_noise={}'.format(val))
+        # compare_psnr(r'joint/joint(Paramized_RYYB_noise={})'.format(val),'tiff','Paramized_RYYB_noise={}'.format(val))
 
 def plot(dir_path,name):
     print(dir_path)
@@ -130,7 +136,7 @@ def plot(dir_path,name):
     psnrs = {l.strip().split(':')[0]:float(l.strip().split(':')[1]) for l in lines}
     mapping = defaultdict(list)
     print(psnrs.keys())
-    for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
+    for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG','JointPixel_Triple']:
     # for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
         # for noise in ['','0.05','0.10','0.20','0.50']:
         # for noise in ['0.05','0.20']:
@@ -142,10 +148,10 @@ def plot(dir_path,name):
     # noises = [0.05,0.20]
     noises = [0,0.02,0.05,0.08,0.10,0.15,0.20,0.25,0.30,0.40,0.50]
     # for cfa in ['RGGB','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
-    for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG']:
-        print(cfa)
-        print(noises)
-        print(len(mapping[cfa]))
+    for cfa in ['RGGB','RYYB','Random','RB_G','RB_G_DENOISE','JointPixel_RGBG','JointPixel_Triple']:
+        # print(cfa)
+        # print(noises)
+        # print(len(mapping[cfa]))
         plt.plot(noises,mapping[cfa],label=cfa)
     for noise in noises:
         plt.vlines(noises,ymin=28,ymax=49,color='gray',linestyles='dotted') 
@@ -153,7 +159,7 @@ def plot(dir_path,name):
     plt.xlim(-0.02,0.52)
     plt.ylim(28,50)
     plt.title('Demosaicking Performance')
-    plt.xlabel('$\sigma$')
+    plt.xlabel('$\sigma coefficient$')
     plt.ylabel('PSNR/dB')
     plt.savefig(name)
 
