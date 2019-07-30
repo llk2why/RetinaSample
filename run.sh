@@ -6,6 +6,7 @@
 # python run.py --model_type RB_G_DENOISE
 # python run.py --model_type JointPixel_RGBG
 # python run.py --model_type JointPixel_Triple
+# python run.py --model_type Paramized_RYYB
 
 # # Debug
 # for i in DemosaicSR RYYB Random RB_G RB_G_DENOISE JointPixel_RGBG ;
@@ -37,7 +38,13 @@
 # python run.py --model_type Random
 
 
+python run.py --model_type DemosaicSR
 python run.py --model_type RYYB
+python run.py --model_type Random
+python run.py --model_type Arbitrary
+python run.py --model_type RB_G
+python run.py --model_type RB_G_DENOISE
+python run.py --model_type JointPixel_RGBG
 python run.py --model_type JointPixel_Triple
 python run.py --model_type Paramized_RYYB
 for i in JointPixel_Triple Paramized_RYYB;
