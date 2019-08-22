@@ -7,6 +7,7 @@ import numpy as np
 
 from torch.autograd import Variable
 from collections import OrderedDict
+from config import PATCH_SIZE
 
 
 class ResidualBlock(nn.Module):
@@ -302,9 +303,16 @@ class JointPixel_Triple(nn.Module):
         self.shortcut = nn.Sequential()
 
     def forward(self, input):
-        input[:, :, ::2] = (input[:, :, ::2] + input[:, :, 1::2]) / 2
-        input[:, :, 1::2] = input[:, :, ::2]
-        output = self.stage1(input)
+        num,ch,row,col = input.shape
+        backup = input>=(1/255)
+        zeros = torch.zeros(num,ch,1,col).to(input.device)
+        output = torch.cat((input,zeros),dim=2)
+        output[:,:,::3] =  output[:,:,::3] + output[:,:,1::3] + output[:,:,2::3]
+        output[:,:,::3,::2] =  (output[:,:,::3,::2] + output[:,:,::3,1::2])/3
+        output[:,:,1::3] = output[:,:,::3]
+        output[:,:,2::3] = output[:,:,::3]
+        output = output[:,:,:-1,:] * backup.float()
+        output = self.stage1(output)
         output = self.stage2(output)
         output = self.stage3(output) + self.shortcut(input)
         return output
@@ -337,10 +345,11 @@ class Paramized_RYYB(nn.Module):
         self.shortcut = nn.Sequential()
 
     def forward(self, input):
-
-        input[:,1,:,:][input[:,1,:,:]>0] = \
-            self.alpha*input[:,0,:,:][input[:,1,:,:]>0]+self.beta*input[:,1,:,:][input[:,1,:,:]>0]
-        input[:,0,:,:][input[:,1,:,:]>0] = input[:,0,:,:][input[:,1,:,:]>0].fill_(0)
+        eps = 0.99/255
+        index = input[:,1,:,:]>eps
+        # input[:,1,:,:][index] = self.alpha*input[:,0,:,:][index]+self.beta*input[:,1,:,:][index]
+        input[:,1,:,:][index] = input[:,0,:,:][index]+input[:,1,:,:][index]
+        input[:,0,:,:][index].fill_(0)
 
         output = self.stage1(input)
         output = self.stage2(output)

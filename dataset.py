@@ -84,9 +84,10 @@ class DatasetFromFolder(data.Dataset):
             e[:,1::2] = e[:,::2]/2
             e[:,::2] = e[:,::2]/2
         elif self.model_type in ['JointPixel_Triple']:
-            e[:,:,:2] = e[:,:,:2]/3
+            e[:,:,::2] = e[:,:,::2]/3
+            e[:,:,1::2] = e[:,:,::2]
             e[:,1::3] = e[:,::3]
-            e[:,2::3] = e[:,::3]
+            e[:,2::3] = e[:,::3][:,:-1]
 
         x = x+e*(x>0).float()
         x[x>1]=1.0
