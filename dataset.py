@@ -88,6 +88,10 @@ class DatasetFromFolder(data.Dataset):
             e[:,:,1::2] = e[:,:,::2]
             e[:,1::3] = e[:,::3]
             e[:,2::3] = e[:,::3][:,:-1]
+        elif self.model_type in ['JointPixel_SR']:
+            e[:,::2] = e[:,::2]/4
+            e[:,1::2] = e[:,::2]
+            e[:,:,1::2] = e[:,:,::2]
 
         x = x+e*(x>0).float()
         x[x>1]=1.0

@@ -34,7 +34,7 @@ parser.add_argument("--debug", default=False, action='store_true', help="Switch 
 parser.add_argument("--noise", default=0, type=float, help="noise std")
 parser.add_argument("--model_type", default='RB_G_DENOISE', type=str,
                     choices=['DemosaicSR', 'RYYB', 'Random', 'Arbitrary', 'RB_G', 'RB_G_DENOISE',\
-                             'JointPixel_RGBG','JointPixel_Triple','Paramized_RYYB'],
+                             'JointPixel_RGBG','JointPixel_Triple','JointPixel_SR','Paramized_RYYB'],
                     help="Available models")
 parser.add_argument("--threads", default=5, type=int, help="Worker number")
 args = parser.parse_args()
@@ -81,6 +81,7 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
     loss_list = []
     test_loss = []
     i = 1
+    # TODO: figure out the difference bewteen psnr of tensor and that of uint8 narray.
     with torch.no_grad():
         for x, y in loader:
             x, y = x.to(device), y.to(device)
@@ -105,22 +106,11 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                 # print('Saving results..')
                 if args.model_type == 'DemosaicSR':
                     result_dir = Dataset.RESULT
-                elif args.model_type == 'RYYB':
-                    result_dir = Dataset.RYYB_RESULT
-                elif args.model_type == 'Random':
-                    result_dir = Dataset.Random_RESULT
-                elif args.model_type == 'Arbitrary':
-                    result_dir = Dataset.Arbitrary_RESULT
-                elif args.model_type == 'RB_G':
-                    result_dir = Dataset.RB_G_RESULT
-                elif args.model_type == 'RB_G_DENOISE':
-                    result_dir = Dataset.RB_G_DENOISE_RESULT
-                elif args.model_type == 'JointPixel_RGBG':
-                    result_dir = Dataset.JointPixel_RGBG_RESULT
-                elif args.model_type == 'JointPixel_Triple':
-                    result_dir = Dataset.JointPixel_Triple_RESULT
-                elif args.model_type == 'Paramized_RYYB':
-                    result_dir = Dataset.Paramized_RYYB_RESULT
+                else:
+                    try:
+                        result_dir = eval("Dataset.{}_RESULT".format(args.model_type))
+                    except Exception as e:
+                        logger.fatal("{}".format(e))
                 if args.noise > 0:
                     result_dir = result_dir + ' noise={:.2f}'.format(args.noise)
                 if not os.path.exists(result_dir):
@@ -152,30 +142,12 @@ def main():
     if args.model_type == 'DemosaicSR':
         train_x_dir = Dataset.MOSAIC_DIR
         test_x_dir = Dataset.MOSAIC_DIR_TEST
-    elif args.model_type == 'RYYB':
-        train_x_dir = Dataset.RYYB_MOSAIC_DIR
-        test_x_dir = Dataset.RYYB_MOSAIC_DIR_TEST
-    elif args.model_type == 'Random':
-        train_x_dir = Dataset.Random_MOSAIC_DIR
-        test_x_dir = Dataset.Random_MOSAIC_DIR_TEST
-    elif args.model_type == 'Arbitrary':
-        train_x_dir = Dataset.Arbitrary_MOSAIC_DIR
-        test_x_dir = Dataset.Arbitrary_MOSAIC_DIR_TEST
-    elif args.model_type == 'RB_G':
-        train_x_dir = Dataset.RB_G_MOSAIC_DIR
-        test_x_dir = Dataset.RB_G_MOSAIC_DIR_TEST
-    elif args.model_type == 'RB_G_DENOISE':
-        train_x_dir = Dataset.RB_G_DENOISE_MOSAIC_DIR
-        test_x_dir = Dataset.RB_G_DENOISE_MOSAIC_DIR_TEST
-    elif args.model_type == 'JointPixel_RGBG':
-        train_x_dir = Dataset.JointPixel_RGBG_MOSAIC_DIR
-        test_x_dir = Dataset.JointPixel_RGBG_MOSAIC_DIR_TEST
-    elif args.model_type == 'JointPixel_Triple':
-        train_x_dir = Dataset.JointPixel_Triple_MOSAIC_DIR
-        test_x_dir = Dataset.JointPixel_Triple_MOSAIC_DIR_TEST
-    elif args.model_type == 'Paramized_RYYB':
-        train_x_dir = Dataset.Paramized_RYYB_MOSAIC_DIR
-        test_x_dir = Dataset.Paramized_RYYB_MOSAIC_DIR_TEST
+    else:
+        try:
+            train_x_dir = eval("Dataset.{}_MOSAIC_DIR".format(args.model_type))
+            test_x_dir = eval("Dataset.{}_MOSAIC_DIR_TEST".format(args.model_type))
+        except Exception as e:
+            logger.fatal("{}".format(e))
     train_y_dir = Dataset.CHOPPED_DIR
     test_y_dir = Dataset.CHOPPED_DIR_TEST
 

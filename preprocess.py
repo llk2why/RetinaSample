@@ -277,6 +277,30 @@ def sample_jointpixel_triple_imgs():
         print('\r{:.2f}%'.format(100.0 * i / len(pics)), end='')
     print('\r100.0% ')
 
+def sample_jointpixel_sr_imgs():
+    if not os.path.exists(Dataset.JointPixel_SR_MOSAIC_DIR):
+        os.makedirs(Dataset.JointPixel_SR_MOSAIC_DIR)
+    if not os.path.exists(Dataset.JointPixel_SR_MOSAIC_DIR_TEST):
+        os.makedirs(Dataset.JointPixel_SR_MOSAIC_DIR_TEST)
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR) if 'tif' in x.lower()]
+    for i, pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR, pic)
+        fpath_mosaic = os.path.join(Dataset.JointPixel_SR_MOSAIC_DIR, pic)
+        img = cv2.imread(fpath)
+        im = np.stack([np.where(JOINTPIXEL_SR_MATRIX == i, img[:, :, i], 0) for i in range(3)], axis=-1)
+        cv2.imwrite(fpath_mosaic, im)
+        print('\r{:.2f}%'.format(100.0 * i / len(pics)), end='')
+    print('\r100.0% ')
+    pics = [x for x in os.listdir(Dataset.CHOPPED_DIR_TEST) if 'tif' in x.lower()]
+    for i, pic in enumerate(pics):
+        fpath = os.path.join(Dataset.CHOPPED_DIR_TEST, pic)
+        fpath_mosaic = os.path.join(Dataset.JointPixel_SR_MOSAIC_DIR_TEST, pic)
+        img = cv2.imread(fpath)
+        im = np.stack([np.where(JOINTPIXEL_SR_MATRIX == i, img[:, :, i], 0) for i in range(3)], axis=-1)
+        cv2.imwrite(fpath_mosaic, im)
+        print('\r{:.2f}%'.format(100.0 * i / len(pics)), end='')
+    print('\r100.0% ')
+
 
 def start():
     # gather_info()
@@ -288,7 +312,8 @@ def start():
     # sample_arbitrary_imgs()
     # sample_rb_g_imgs()
     # sample_jointpixel_rgbg_imgs()
-    sample_jointpixel_triple_imgs()
+    # sample_jointpixel_triple_imgs()
+    sample_jointpixel_sr_imgs()
 
 
 if __name__ == '__main__':

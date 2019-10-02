@@ -73,6 +73,12 @@ class Dataset:
     JointPixel_Triple_MOSAIC_DIR_TEST = MOSAIC_DIR_TEST_TEMPLATE.format(Name)
     JointPixel_Triple_RESULT = RESULT_TEMPLATE.format(Name)
 
+    # [INPUT] train JointPixel_SR input dir & test JointPixel_SR input dir
+    Name = 'JointPixel_SR'
+    JointPixel_SR_MOSAIC_DIR = MOSAIC_DIR_TEMPLATE.format(Name)
+    JointPixel_SR_MOSAIC_DIR_TEST = MOSAIC_DIR_TEST_TEMPLATE.format(Name)
+    JointPixel_SR_RESULT = RESULT_TEMPLATE.format(Name)
+
     # [INPUT] train Paramized_RYYB input dir & test Paramized_RYYB input dir
     Name = 'Paramized_RYYB'
     Paramized_RYYB_MOSAIC_DIR = RYYB_MOSAIC_DIR
@@ -164,6 +170,16 @@ def generate_jointpixel_triple_sample_matrix(shape):
     print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample, save_name))
     print(sample.shape)
 
+def generate_jointpixel_sr_sample_matrix(shape):
+    save_name = 'Template/JointPixel_SRTemplate.npy'
+    tile = np.array([[0, 1], [1, 2]])
+    tile = np.repeat(tile,2,axis=0)
+    tile = np.repeat(tile,2,axis=1)
+    sample = np.tile(tile, np.array(shape) // 4)
+    np.save(save_name, sample)
+    print('Generated bayer sampling matrix:\n{} \nand saved to file "{}" '.format(sample, save_name))
+    print(sample.shape)
+
 
 if __name__ == '__main__':
     shape = (PATCH_SIZE, PATCH_SIZE)
@@ -172,7 +188,8 @@ if __name__ == '__main__':
     # generate_random_sample_matrix(shape)
     # generate_rb_g_sample_matrix(shape)
     # generate_jointpixel_rgbg_sample_matrix(shape)
-    generate_jointpixel_triple_sample_matrix(shape)
+    # generate_jointpixel_triple_sample_matrix(shape)
+    generate_jointpixel_sr_sample_matrix(shape)
     
 
 file_path = os.path.split(os.path.abspath(__file__))[0]
@@ -183,3 +200,4 @@ RANDOM_SAMPLE_MATRIX = np.array(np.load(os.path.join(file_path,'Template/RandomT
 RB_G_SAMPLE_MATRIX = np.array(np.load(os.path.join(file_path,'Template/RB_GTemplate.npy')))
 JOINTPIXEL_RGBG_MATRIX = np.array(np.load(os.path.join(file_path,'Template/JointPixel_RGBGTemplate.npy')))
 JOINTPIXEL_Triple_MATRIX = np.array(np.load(os.path.join(file_path,'Template/JointPixel_TripleTemplate.npy')))
+JOINTPIXEL_SR_MATRIX = np.array(np.load(os.path.join(file_path,'Template/JointPixel_SRTemplate.npy')))
