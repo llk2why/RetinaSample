@@ -117,8 +117,6 @@ def evaluate(epoch, model, loader, criterion, save=False, names=None):
                     os.makedirs(result_dir)
                 predictions = (predictions.cpu().numpy()).transpose(0, 2, 3, 1)
                 n = predictions.shape[0]
-                if not os.path.exists(result_dir):
-                    os.makedirs(result_dir)
                 for j in range(n):
                     fpath = os.path.join(result_dir, names[j + args.batch_size * (i - 1)])
                     img = (predictions[j] * 255)
